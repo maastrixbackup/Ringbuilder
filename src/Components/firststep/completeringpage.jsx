@@ -1,30 +1,3 @@
-// import React from "react";
-// import { useRingBuilder } from "../../context/RingBuilderContext";
-// import DiamondViewer from "./diamondViewer";
-
-// export default function CompleteRingPage() {
-//   const { selectedSetting, selectedDiamond } = useRingBuilder();
-
-//   if (!selectedDiamond) return <p>No diamond selected.</p>;
-
-//   return (
-//     <div className="container mt-4">
-//       <h3>Your Completed Ring</h3>
-//       <DiamondViewer modelPath={selectedDiamond.model} />
-//       <p>
-//         <strong>Setting:</strong> {selectedSetting?.label}
-//       </p>
-//       <p>
-//         <strong>Diamond:</strong> {selectedDiamond.label}
-//       </p>
-//       <p>
-//         <strong>Price:</strong> {selectedDiamond.price}
-//       </p>
-//     </div>
-//   );
-// }
-
-// src/Components/firststep/completingpage.jsx
 import React from "react";
 import { useRingBuilder } from "../../context/RingBuilderContext";
 import DiamondViewer from "./diamondViewer";

@@ -81,7 +81,7 @@ const GpPage = () => {
             </p>
           </div>
 
-          {/* Ring Style Filters */}
+        
           <div className="col-md-7">
             <div className="ring-style-list">
               {styles.map((style) => (
