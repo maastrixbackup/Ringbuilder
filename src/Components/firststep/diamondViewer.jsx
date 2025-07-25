@@ -13,7 +13,11 @@ function Model({ modelPath }) {
   return <primitive object={scene} />;
 }
 
-export default function DiamondViewer({ modelPath, height = "250px" }) {
+export default function DiamondViewer({
+  modelPath,
+  height = "300px",
+  width = "250px",
+}) {
   return (
     <div style={{ width: "100%", height }}>
       <Canvas camera={{ position: [0, 0, 2.5], fov: 45 }}>

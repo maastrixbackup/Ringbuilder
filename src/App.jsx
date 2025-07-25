@@ -13,12 +13,13 @@ const CompleteRingPage = lazy(() =>
 );
 const JewelryViewer = lazy(() => import("./Components/Sample/JewelryViewer"));
 import "../style.css";
+import Loader from "../src/utils/loader";
 
 export default function App() {
   return (
-    <RingBuilderProvider>  
+    <RingBuilderProvider>
       <Router>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Loader />}>
           <Routes>
             {/* <Route path="/" element={<Navigate to="/settings" />} /> */}
             <Route path="/" element={<SettingsPage />} />
