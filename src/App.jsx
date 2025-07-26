@@ -13,6 +13,8 @@ const CompleteRingPage = lazy(() =>
 );
 const JewelryViewer = lazy(() => import("./Components/Sample/JewelryViewer"));
 import "../style.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 import Loader from "../src/utils/loader";
 
 export default function App() {

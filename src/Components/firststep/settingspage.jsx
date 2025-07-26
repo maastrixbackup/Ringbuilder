@@ -46,7 +46,7 @@ const GpPage = () => {
 
   return (
     <section className="mt-2">
-      <div className="container-fluid">
+      <div className="container">
         {loading ? (
           <Loader />
         ) : (
@@ -100,7 +100,7 @@ const GpPage = () => {
                 </p>
               </div>
 
-              <div className="col-md-7">
+              <div className="col-md-12">
                 <div className="ring-style-list d-flex flex-wrap gap-2">
                   {ringStyles.map((style) => (
                     <div
