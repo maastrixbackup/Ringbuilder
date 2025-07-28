@@ -5,14 +5,42 @@ import DiamondViewer from "./diamondViewer";
 export default function CompleteRingPage() {
   const { selectedSetting, selectedDiamond } = useRingBuilder();
 
-  const [themeColor, setThemeColor] = useState("#b8860b"); // default: Gold
-
   const themes = [
-    { label: "Gold", color: "#b8860b" },
-    { label: "Rose Gold", color: "#b76e79" },
-    { label: "Platinum", color: "#e5e4e2" },
-    { label: "Black", color: "#2f2f2f" },
+     {
+    label: "Original",
+    raw: true, 
+  },
+    {
+      label: "Gold",
+      color: "#b8860b",
+      metalness: 1,
+      roughness: 0.2,
+      envMapIntensity: 1.5,
+    },
+    {
+      label: "Rose Gold",
+      color: "#b76e79",
+      metalness: 1,
+      roughness: 0.25,
+      envMapIntensity: 1.3,
+    },
+    {
+      label: "Platinum",
+      color: "#e5e4e2",
+      metalness: 0.9,
+      roughness: 0.3,
+      envMapIntensity: 1.2,
+    },
+    {
+      label: "Black",
+      color: "#2f2f2f",
+      metalness: 0.8,
+      roughness: 0.35,
+      envMapIntensity: 1.1,
+    },
   ];
+
+  const [theme, setTheme] = useState(themes[0]);
 
   return (
     <div className="container mt-4">
@@ -62,8 +90,11 @@ export default function CompleteRingPage() {
             <div className="d-flex gap-2 mt-2">
               {themes.map((t) => (
                 <button
-                  key={t.color}
-                  onClick={() => setThemeColor(t.color)}
+                  key={t.label}
+                  onClick={() => {
+                    console.log("Theme selected:", t.label); // Debug
+                    setTheme(t);
+                  }}
                   style={{
                     backgroundColor: t.color,
                     border: "1px solid #ccc",
@@ -71,7 +102,8 @@ export default function CompleteRingPage() {
                     height: "40px",
                     borderRadius: "50%",
                     cursor: "pointer",
-                    outline: themeColor === t.color ? "2px solid black" : "none",
+                    outline:
+                      theme.label === t.label ? "3px solid black" : "none",
                   }}
                   title={t.label}
                 />
@@ -80,15 +112,14 @@ export default function CompleteRingPage() {
           </div>
 
           <div className="row">
-            {/* Diamond 3D Viewer */}
             <div className="col-md-4">
               <DiamondViewer
-                // modelPath={selectedDiamond.model}
-                themeColor={themeColor}
+                theme={theme}
+                modelPath={"/models/gltf/ring.gltf"}
               />
+              {/* <DiamondViewer /> */}
             </div>
 
-            {/* Ring Image (static) */}
             <div className="col-md-4">
               <img
                 src="https://dev.maastrixdemo.com/ring_builder/public/storage/images/rings/r_img_1753443378.jpeg"
@@ -97,7 +128,6 @@ export default function CompleteRingPage() {
               />
             </div>
 
-            {/* Info Section */}
             <div className="col-md-4">
               <p>
                 <strong>Setting:</strong> {selectedSetting.label}

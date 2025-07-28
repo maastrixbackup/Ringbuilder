@@ -20,7 +20,7 @@ import Loader from "../src/utils/loader";
 export default function App() {
   return (
     <RingBuilderProvider>
-      <Router>
+      <Router basename="/ring_builder">
         <Suspense fallback={<Loader />}>
           <Routes>
             {/* <Route path="/" element={<Navigate to="/settings" />} /> */}
