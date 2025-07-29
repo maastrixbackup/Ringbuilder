@@ -138,10 +138,12 @@ const GpPage = () => {
                   <div
                     className="ring-product-box"
                     onClick={() => {
-                      setSelectedSetting({
+                      const newSetting = {
                         label: ring.title,
                         price: `$${ring.ring_price}`,
-                      });
+                      };
+                      setSelectedSetting(newSetting);
+                      localStorage.removeItem("selectedDiamond");
                       navigate("/diamonds");
                     }}
                     style={{ cursor: "pointer" }}

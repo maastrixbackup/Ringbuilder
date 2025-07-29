@@ -6,10 +6,10 @@ export default function CompleteRingPage() {
   const { selectedSetting, selectedDiamond } = useRingBuilder();
 
   const themes = [
-     {
-    label: "Original",
-    raw: true, 
-  },
+    {
+      label: "Original",
+      raw: true,
+    },
     {
       label: "Gold",
       color: "#b8860b",
@@ -84,7 +84,6 @@ export default function CompleteRingPage() {
         <p>Please go back and select both a setting and diamond.</p>
       ) : (
         <>
-          {/* Theme Picker */}
           <div className="mb-3">
             <strong>Choose Ring Theme:</strong>
             <div className="d-flex gap-2 mt-2">
@@ -92,7 +91,7 @@ export default function CompleteRingPage() {
                 <button
                   key={t.label}
                   onClick={() => {
-                    console.log("Theme selected:", t.label); // Debug
+                    console.log("Theme selected:", t.label);
                     setTheme(t);
                   }}
                   style={{
@@ -117,7 +116,6 @@ export default function CompleteRingPage() {
                 theme={theme}
                 modelPath={"/models/gltf/ring.gltf"}
               />
-              {/* <DiamondViewer /> */}
             </div>
 
             <div className="col-md-4">

@@ -9,14 +9,14 @@ function Model({ theme, modelPath }) {
     import.meta.env.BASE_URL + modelPath
   );
 
-  // Clone the scene so each theme gets its own copy
   const scene = useMemo(() => originalScene.clone(true), [originalScene]);
 
   useEffect(() => {
     scene.traverse((child) => {
       if (child.isMesh && child.material) {
-        if (!theme.raw) {
-          // Apply theme if it's not raw
+          const name = child.name?.toLowerCase() || "";
+    const isDiamond = name.includes("diamond_round");
+        if (!isDiamond && !theme.raw) {
           child.material = new THREE.MeshStandardMaterial({
             color: new THREE.Color(theme.color),
             metalness: theme.metalness,
@@ -28,12 +28,11 @@ function Model({ theme, modelPath }) {
       }
     });
 
-    // Center and scale model
     const box = new THREE.Box3().setFromObject(scene);
     const center = new THREE.Vector3();
     box.getCenter(center);
     scene.position.sub(center);
-    scene.scale.set(0.5, 0.5, 0.5);
+    // scene.scale.set(0.5, 0.5, 0.5);
   }, [scene, theme]);
 
   return <primitive object={scene} ref={group} />;
