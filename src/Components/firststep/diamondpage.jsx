@@ -10,7 +10,7 @@ const DiamondsPage = () => {
   const [loading, setLoading] = useState(true);
   const [diamondShapes, setDiamondShapes] = useState([]);
   const [allDiamonds, setAllDiamonds] = useState([]);
-  const [selectedShape, setSelectedShape] = useState(null); // no "All"
+  const [selectedShape, setSelectedShape] = useState(null);
 
   const getDiamonds = async (shape = null) => {
     try {
@@ -83,6 +83,22 @@ const DiamondsPage = () => {
                 <i className="fas fa-ring"></i>
               </div>
             </div>
+          </div>
+
+          <div className="back-to-gallery mt-3 mb-2">
+            <span
+              onClick={() => navigate("/")}
+              style={{
+                fontSize: "12px",
+                fontWeight: "600",
+                textDecoration: "underline",
+                cursor: "pointer",
+                color: "#000",
+                textTransform: "uppercase",
+              }}
+            >
+              &lt; BACK TO RING SECTION
+            </span>
           </div>
 
           {/* Diamond Shape Filters */}

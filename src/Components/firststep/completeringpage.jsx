@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useRingBuilder } from "../../context/RingBuilderContext";
 import DiamondViewer from "./diamondViewer";
-
+import { useNavigate } from "react-router-dom";
 export default function CompleteRingPage() {
   const { selectedSetting, selectedDiamond } = useRingBuilder();
-
+  const navigate = useNavigate();
   const themes = [
     {
       label: "Original",
@@ -76,6 +76,22 @@ export default function CompleteRingPage() {
             <i className="fas fa-ring"></i>
           </div>
         </div>
+      </div>
+
+      <div className="back-to-gallery mt-3 mb-2">
+        <span
+          onClick={() => navigate("/diamonds")}
+          style={{
+            fontSize: "12px",
+            fontWeight: "600",
+            textDecoration: "underline",
+            cursor: "pointer",
+            color: "#000",
+            textTransform: "uppercase",
+          }}
+        >
+          &lt; BACK TO DIAMOND SECTION
+        </span>
       </div>
 
       <h3 className="mb-4">Your Completed Ring</h3>
