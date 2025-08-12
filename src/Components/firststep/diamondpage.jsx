@@ -42,14 +42,13 @@ const DiamondsPage = () => {
   };
 
   useEffect(() => {
-    getDiamonds(); // fetch all diamonds on mount
+    getDiamonds();
   }, []);
 
   return (
     <section className="mt-2">
       <div className={`container ${loading ? "blurred" : ""}`}>
         <>
-          {/* Stepper */}
           <div className="stepper">
             <div className="step">
               <div className="step-number">1</div>
@@ -61,7 +60,16 @@ const DiamondsPage = () => {
                 <i className="fas fa-cogs"></i>
               </div>
             </div>
-
+             <div className="step ">
+              <div className="step-number">2</div>
+              <div className="step-label">
+                <small>Ring</small>
+                <strong>Overview</strong>
+              </div>
+              <div className="step-icon">
+                <i className="far fa-gem"></i>
+              </div>
+            </div>
             <div className="step active">
               <div className="step-number">2</div>
               <div className="step-label">

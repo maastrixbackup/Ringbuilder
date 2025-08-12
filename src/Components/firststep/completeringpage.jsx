@@ -44,7 +44,6 @@ export default function CompleteRingPage() {
 
   return (
     <div className="container mt-4">
-      {/* Stepper */}
       <div className="stepper mb-4 d-flex justify-content-between">
         <div className="step">
           <div className="step-number">1</div>
@@ -54,6 +53,16 @@ export default function CompleteRingPage() {
           </div>
           <div className="step-icon">
             <i className="fas fa-cogs"></i>
+          </div>
+        </div>
+        <div className="step">
+          <div className="step-number">2</div>
+          <div className="step-label">
+            <small>Ring</small>
+            <strong>Overview</strong>
+          </div>
+          <div className="step-icon">
+            <i className="far fa-gem"></i>
           </div>
         </div>
         <div className="step">
