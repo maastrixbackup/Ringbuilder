@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useRingBuilder } from "../../context/RingBuilderContext";
 import { baseUrl } from "../../utils/utils";
 import Loader from "../../utils/loader";
@@ -7,92 +7,80 @@ import Tab from "../Tab";
 
 const GpPage = () => {
   const [loading, setLoading] = useState(true);
-  const [selectedStyle, setSelectedStyle] = useState("All");
   const [ringStyles, setRingStyles] = useState([]);
   const [allRings, setAllRings] = useState([]);
   const navigate = useNavigate();
   const { setSelectedSetting } = useRingBuilder();
-
-  const getFilters = async (styleTitle = null) => {
-    try {
-      setLoading(true);
-      const payload = styleTitle ? { ring_style: styleTitle } : {};
-
-      const response = await fetch(baseUrl() + "ring-products", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const result = await response.json();
-      if (result.status && result.data) {
-        if (!styleTitle) {
-          setRingStyles(result.data.style || []);
-        }
-        setAllRings(result.data.products || []);
-      }
-    } catch (error) {
-      console.error("Error occurred while fetching the data", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [searchParams] = useSearchParams();
+  const [filters, setFilters] = useState({});
 
   useEffect(() => {
-    getFilters();
+    const paramsObj = {};
+    for (const [key, value] of searchParams.entries()) {
+      paramsObj[key] = value;
+    }
+    setFilters(paramsObj);
   }, []);
+
+  useEffect(() => {
+    const cleanFilters = Object.fromEntries(
+      Object.entries(filters).filter(([_, v]) => v && v.trim() !== "")
+    );
+
+    const queryString = new URLSearchParams(cleanFilters).toString();
+
+    navigate(`/ring_builder/${queryString ? `?${queryString}` : ""}`, {
+      replace: true,
+    });
+  }, [filters, navigate]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setLoading(true);
+
+    fetch(`${baseUrl()}ring-products?${searchParams.toString()}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.status && result.data) {
+          setRingStyles(result.data.style || []);
+          setAllRings(result.data.products || []);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (err.name !== "AbortError") {
+          console.error(err);
+          setLoading(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, [searchParams]);
+
+  const updateFilter = (key, value) => {
+    setFilters((prev) => {
+      if (key === "ring-type") {
+        if (prev[key] === value) {
+          const { [key]: _, ...rest } = prev;
+          return rest;
+        }
+        return { ...prev, [key]: value };
+      }
+
+      return { ...prev, [key]: value };
+    });
+  };
 
   return (
     <section className="mt-2">
       <div className={`container ${loading ? "blurred" : ""}`}>
         <>
-          {/* Stepper */}
-          {/* <div className="stepper">
-            <div className="step active">
-              <div className="step-number">1</div>
-              <div className="step-label">
-                <small>Choose a</small>
-                <strong>SETTING</strong>
-              </div>
-              <div className="step-icon">
-                <i className="fas fa-cogs"></i>
-              </div>
-            </div>
-            <div className="step">
-              <div className="step-number">2</div>
-              <div className="step-label">
-                <small>Ring</small>
-                <strong>Overview</strong>
-              </div>
-              <div className="step-icon">
-                <i className="far fa-gem"></i>
-              </div>
-            </div>
-            <div className="step">
-              <div className="step-number">2</div>
-              <div className="step-label">
-                <small>Choose a</small>
-                <strong>DIAMOND</strong>
-              </div>
-              <div className="step-icon">
-                <i className="far fa-gem"></i>
-              </div>
-            </div>
-            <div className="step">
-              <div className="step-number">3</div>
-              <div className="step-label">
-                <small>Complete</small>
-                <strong>RING</strong>
-              </div>
-              <div className="step-icon">
-                <i className="fas fa-ring"></i>
-              </div>
-            </div>
-          </div> */}
           <Tab />
-          {/* Header */}
           <div className="row mt-4">
             <div className="col-md-7">
               <h1 className="engaging-ring">
@@ -113,13 +101,13 @@ const GpPage = () => {
                   <div
                     key={style.id}
                     className={`ring-style-item ${
-                      selectedStyle === style.title ? "border border-dark" : ""
+                      filters["ring-type"] === style.title
+                        ? "!border !border-gray-500 !bg-green-200"
+                        : ""
                     }`}
                     onClick={() => {
-                      setSelectedStyle(style.title);
-                      getFilters(style.title);
+                      updateFilter("ring-type", style.title);
                     }}
-                    style={{ cursor: "pointer" }}
                   >
                     <img
                       src={
@@ -139,45 +127,73 @@ const GpPage = () => {
 
           <div className="col-md-12 mt-3">
             <div className="filter-row d-flex flex-wrap align-items-center gap-2">
-              <select className="filter-dropdown">
+              <select
+                className="filter-dropdown"
+                value={filters.size}
+                onChange={(e) => updateFilter("size", e.target.value)}
+              >
                 <option value="">Ring Size</option>
-                <option>4</option>
-                <option>4.5</option>
-                <option>5</option>
+                <option value="4">4</option>
+                <option value="4.5">4.5</option>
+                <option value="5">5</option>
               </select>
-              <select className="filter-dropdown">
+              <select
+                className="filter-dropdown"
+                value={filters.metal}
+                onChange={(e) => updateFilter("metal", e.target.value)}
+              >
                 <option value="">Metal</option>
-                <option>14K White Gold</option>
-                <option>14K Yellow Gold</option>
+                <option value="14K White Gold">14K White Gold</option>
+                <option value="14K Yellow Gold">14K Yellow Gold</option>
               </select>
-              <select className="filter-dropdown">
+              <select
+                className="filter-dropdown"
+                value={filters.width}
+                onChange={(e) => updateFilter("width", e.target.value)}
+              >
                 <option value="">Width</option>
-                <option>1.5 mm</option>
-                <option>2 mm</option>
-                <option>2.5 mm</option>
+                <option value="1.5 mm">1.5 mm</option>
+                <option value="2 mm">2 mm</option>
+                <option value="2.5 mm">2.5 mm</option>
               </select>
-              <select className="filter-dropdown">
+              <select
+                className="filter-dropdown"
+                value={filters["set-with"]}
+                onChange={(e) => updateFilter("set-with", e.target.value)}
+              >
                 <option value="">Can Be Set With</option>
-                <option>Round</option>
-                <option>Princess</option>
+                <option value="Round">Round</option>
+                <option value="Princess">Princess</option>
               </select>
-              <select className="filter-dropdown">
+              <select
+                className="filter-dropdown"
+                value={filters.price}
+                onChange={(e) => updateFilter("price", e.target.value)}
+              >
                 <option value="">Price</option>
-                <option>Under $1,000</option>
-                <option>$1,000–$2,500</option>
+                <option value="<1000">Under $1,000</option>
+                <option value="1000–2500">$1,000–$2,500</option>
               </select>
               <label className="filter-checkbox">
                 <input type="checkbox" /> On Sale
               </label>
-              <select className="filter-dropdown">
+              <select
+                className="filter-dropdown"
+                value={filters["date-by"]}
+                onChange={(e) => updateFilter("date-by", e.target.value)}
+              >
                 <option value="">Shipping Date by</option>
-                <option>1 Week</option>
-                <option>2 Weeks</option>
+                <option value="1 Week">1 Week</option>
+                <option value="2 Weeks">2 Weeks</option>
               </select>
-              <select className="filter-dropdown">
+              <select
+                className="filter-dropdown"
+                value={filters["sort-by"]}
+                onChange={(e) => updateFilter("sort-by", e.target.value)}
+              >
                 <option value="">Sort By</option>
-                <option>Best Sellers</option>
-                <option>Price: Low to High</option>
+                <option value="Best Sellers">Best Sellers</option>
+                <option value="Price: Low to High">Price: Low to High</option>
               </select>
             </div>
           </div>
