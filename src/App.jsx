@@ -13,6 +13,7 @@ const CompleteRingPage = lazy(() =>
 );
 const JewelryViewer = lazy(() => import("./Components/Sample/JewelryViewer"));
 import "../style.css";
+import DummyPage from "./Components/firststep/dummyPage";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import Loader from "../src/utils/loader";
@@ -28,6 +29,7 @@ export default function App() {
             <Route path="/diamonds" element={<DiamondsPage />} />
             <Route path="/complete-ring" element={<CompleteRingPage />} />
             <Route path="/sample" element={<JewelryViewer />} />
+            <Route path="/test" element={<DummyPage />} />
           </Routes>
         </Suspense>
       </Router>
