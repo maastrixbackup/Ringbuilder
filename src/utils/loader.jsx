@@ -1,17 +1,6 @@
-import React, { useEffect, useState } from "react";
-import "./Loader.css";
 
-export default function Loader({ isLoading }) {
-  const [isVisible, setIsVisible] = useState(false);
+export default function Loader() {
 
-  useEffect(() => {
-    if (isLoading) {
-      setIsVisible(true);
-    } else {
-      const timer = setTimeout(() => setIsVisible(false), 300); 
-      return () => clearTimeout(timer);
-    }
-  }, [isLoading]);
 
   return (
     <div class="flex items-center justify-center bg-gray-100">

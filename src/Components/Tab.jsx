@@ -3,51 +3,56 @@ import { useState } from "react";
 const STEPS = [
   {
     key: "style",
-    label: "Style",
-    tagline: "Pick a ring style",
+    label: "Setting",
+    tagline: "Choose a Setting",
+    price: "$1,200",
     img: "https://images.unsplash.com/photo-1543294001-f7cd5d7fb516?q=80&w=200&auto=format&fit=crop",
   },
   {
     key: "metal",
-    label: "Metal",
-    tagline: "Choose your metal",
+    label: "Setting",
+    tagline: "View your Setting",
+    price: "$1,200",
     img: "https://images.unsplash.com/photo-1543294001-f7cd5d7fb516?q=80&w=200&auto=format&fit=crop",
   },
   {
     key: "stone",
-    label: "Stone",
-    tagline: "Select a gemstone",
+    label: "Diamond",
+    tagline: "Choose a Diamond",
+    price: "$3,500",
     img: "https://images.unsplash.com/photo-1543294001-f7cd5d7fb516?q=80&w=200&auto=format&fit=crop",
   },
   {
     key: "customize",
-    label: "Customize",
-    tagline: "Size & engraving",
+    label: "Diamond",
+    tagline: "View Diamond",
+    price: "$3,500",
     img: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=200&auto=format&fit=crop",
   },
   {
     key: "review",
-    label: "Review",
-    tagline: "Summary & checkout",
+    label: "Complete Ring",
+    tagline: "Checkout",
+    price: "$4,700",
     img: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=200&auto=format&fit=crop",
   },
 ];
 
 export default function RingBuilderArrowStepperImages() {
-  const [current, setCurrent] = useState(1); // example: on step 2
+  const [current, setCurrent] = useState(1);
 
   return (
     <div className="max-w-6xl mx-auto mt-6">
-      {/* Tabs Row */}
       <div className="flex w-full">
         {STEPS.map((step, index) => {
           const isCompleted = index < current;
           const isActive = index === current;
-          const baseColor = isCompleted
-            ? "bg-yellow-400 text-white"
-            : isActive
-            ? "bg-yellow-50 text-yellow-800 border-yellow-500 shadow-lg scale-105"
-            : "bg-gray-100 text-gray-500 border-gray-300";
+
+          const baseColor = isActive
+            ? "bg-yellow-400 text-black shadow-lg scale-105"
+            : isCompleted
+            ? "bg-green-400 text-black border-green-600 shadow-lg"
+            : "bg-gray-100 text-gray-500 border-2 border-gray-700";
 
           return (
             <div
@@ -62,30 +67,43 @@ export default function RingBuilderArrowStepperImages() {
             >
               <button
                 onClick={() => setCurrent(index)}
-                className={`flex flex-col items-center justify-center h-20 w-full border ${baseColor} transition-all px-2`}
+                className={`flex items-center justify-between h-22 w-full border ${baseColor} transition-all px-4`}
               >
-                {/* Step Image */}
-                <div
-                  className={`w-8 h-8 mb-1 overflow-hidden rounded-full border shadow-sm 
-                  ${isActive ? "border-yellow-500" : "border-gray-300"}`}
-                >
-                  <img
-                    src={step.img}
-                    alt={step.label}
-                    className="w-full h-full object-cover"
-                  />
+                {/* LEFT SIDE - Text */}
+                <div className="flex flex-col items-start text-left">
+                  <span className="text-sm font-semibold">{step.label}</span>
+                  <span className="text-xs">{step.tagline}</span>
+                  <span className="text-sm font-bold text-yellow-700 mt-1">
+                    {step.price}
+                  </span>
                 </div>
 
-                {/* Step Label */}
-                <span className="text-sm font-semibold">{step.label}</span>
-                <span className="text-xs">{step.tagline}</span>
+                {/* RIGHT SIDE - Image + Links */}
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`w-12 h-12 overflow-hidden rounded-md border shadow-sm 
+                    ${isActive ? "border-yellow-500" : "border-gray-300"}`}
+                  >
+                    <img
+                      src={step.img}
+                      alt={step.label}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex gap-2 mt-1 text-xs">
+                    <button className="text-blue-600 hover:underline">
+                      View
+                    </button>
+                    <button className="text-red-600 hover:underline">
+                      Delete
+                    </button>
+                  </div>
+                </div>
               </button>
             </div>
           );
         })}
       </div>
-
-      
     </div>
   );
 }
