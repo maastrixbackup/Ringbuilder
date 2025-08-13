@@ -39,7 +39,7 @@ const STEPS = [
 ];
 
 export default function RingBuilderArrowStepperImages() {
-  const [current, setCurrent] = useState(1);
+  const [current, setCurrent] = useState(0);
 
   return (
     <div className="max-w-6xl mx-auto mt-6">
@@ -52,7 +52,7 @@ export default function RingBuilderArrowStepperImages() {
             ? "bg-yellow-400 text-black shadow-lg scale-105"
             : isCompleted
             ? "bg-green-400 text-black border-green-600 shadow-lg"
-            : "bg-gray-100 text-gray-500 border-2 border-gray-700";
+            : "bg-gray-200 text-gray-500 border-2 border-gray-700";
 
           return (
             <div
@@ -69,34 +69,41 @@ export default function RingBuilderArrowStepperImages() {
                 onClick={() => setCurrent(index)}
                 className={`flex items-center justify-between h-22 w-full border ${baseColor} transition-all px-4`}
               >
-                {/* LEFT SIDE - Text */}
                 <div className="flex flex-col items-start text-left">
-                  <span className="text-sm font-semibold">{step.label}</span>
+                  <span className="text-sm font-semibold text-black">{step.label}</span>
                   <span className="text-xs">{step.tagline}</span>
                   <span className="text-sm font-bold text-yellow-700 mt-1">
-                    {step.price}
+                    {isCompleted && step.price}
                   </span>
                 </div>
 
-                {/* RIGHT SIDE - Image + Links */}
                 <div className="flex flex-col items-center">
-                  <div
-                    className={`w-12 h-12 overflow-hidden rounded-md border shadow-sm 
-                    ${isActive ? "border-yellow-500" : "border-gray-300"}`}
-                  >
-                    <img
-                      src={step.img}
-                      alt={step.label}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  {index !== 4 && (
+                    <div
+                      className={`w-12 h-12 overflow-hidden rounded-md border shadow-sm 
+                    ${isActive ? "border-yellow-500" : "!border-gray-400"}`}
+                    >
+                      {isCompleted && index !== 4 && (
+                        <img
+                          src={step.img}
+                          alt={step.label}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                    </div>
+                  )}
+
                   <div className="flex gap-2 mt-1 text-xs">
-                    <button className="text-blue-600 hover:underline">
-                      View
-                    </button>
-                    <button className="text-red-600 hover:underline">
-                      Delete
-                    </button>
+                    {isCompleted && (
+                      <>
+                        <button className="text-blue-600 hover:underline">
+                          View
+                        </button>
+                        <button className="text-red-600 hover:underline">
+                          Delete
+                        </button>{" "}
+                      </>
+                    )}
                   </div>
                 </div>
               </button>

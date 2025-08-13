@@ -20,11 +20,11 @@ import Loader from "../src/utils/loader";
 export default function App() {
   return (
     <RingBuilderProvider>
-      <Router basename="/ring_builder">
+      <Router basename="/">
         <Suspense fallback={<Loader />}>
           <Routes>
             {/* <Route path="/" element={<Navigate to="/settings" />} /> */}
-            <Route path="/" element={<SettingsPage />} />
+            <Route path="/ring_builder" element={<SettingsPage />} />
             <Route path="/diamonds" element={<DiamondsPage />} />
             <Route path="/complete-ring" element={<CompleteRingPage />} />
             <Route path="/test" element={<DummyPage />} />
