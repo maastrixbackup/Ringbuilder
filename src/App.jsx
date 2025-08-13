@@ -11,7 +11,7 @@ const DiamondsPage = lazy(() => import("./Components/firststep/diamondpage"));
 const CompleteRingPage = lazy(() =>
   import("./Components/firststep/completeringpage")
 );
-const JewelryViewer = lazy(() => import("./Components/Sample/JewelryViewer"));
+
 import "../style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -27,7 +27,6 @@ export default function App() {
             <Route path="/" element={<SettingsPage />} />
             <Route path="/diamonds" element={<DiamondsPage />} />
             <Route path="/complete-ring" element={<CompleteRingPage />} />
-            <Route path="/sample" element={<JewelryViewer />} />
           </Routes>
         </Suspense>
       </Router>

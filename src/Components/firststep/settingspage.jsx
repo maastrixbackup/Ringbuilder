@@ -27,7 +27,6 @@ const GpPage = () => {
 
       const result = await response.json();
       if (result.status && result.data) {
-        // Only set styles on first load (when no filter is applied)
         if (!styleTitle) {
           setRingStyles(result.data.style || []);
         }
@@ -58,6 +57,16 @@ const GpPage = () => {
               </div>
               <div className="step-icon">
                 <i className="fas fa-cogs"></i>
+              </div>
+            </div>
+            <div className="step">
+              <div className="step-number">2</div>
+              <div className="step-label">
+                <small>Ring</small>
+                <strong>Overview</strong>
+              </div>
+              <div className="step-icon">
+                <i className="far fa-gem"></i>
               </div>
             </div>
             <div className="step">
@@ -124,6 +133,51 @@ const GpPage = () => {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+
+          <div className="col-md-12 mt-3">
+            <div className="filter-row d-flex flex-wrap align-items-center gap-2">
+              <select className="filter-dropdown">
+                <option value="">Ring Size</option>
+                <option>4</option>
+                <option>4.5</option>
+                <option>5</option>
+              </select>
+              <select className="filter-dropdown">
+                <option value="">Metal</option>
+                <option>14K White Gold</option>
+                <option>14K Yellow Gold</option>
+              </select>
+              <select className="filter-dropdown">
+                <option value="">Width</option>
+                <option>1.5 mm</option>
+                <option>2 mm</option>
+                <option>2.5 mm</option>
+              </select>
+              <select className="filter-dropdown">
+                <option value="">Can Be Set With</option>
+                <option>Round</option>
+                <option>Princess</option>
+              </select>
+              <select className="filter-dropdown">
+                <option value="">Price</option>
+                <option>Under $1,000</option>
+                <option>$1,000–$2,500</option>
+              </select>
+              <label className="filter-checkbox">
+                <input type="checkbox" /> On Sale
+              </label>
+              <select className="filter-dropdown">
+                <option value="">Shipping Date by</option>
+                <option>1 Week</option>
+                <option>2 Weeks</option>
+              </select>
+              <select className="filter-dropdown">
+                <option value="">Sort By</option>
+                <option>Best Sellers</option>
+                <option>Price: Low to High</option>
+              </select>
             </div>
           </div>
 
