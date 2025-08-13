@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useRingBuilder } from "../../context/RingBuilderContext";
 import { baseUrl } from "../../utils/utils";
 import Loader from "../../utils/loader";
+import Tab from "../Tab";
 
 const GpPage = () => {
   const [loading, setLoading] = useState(true);
@@ -48,7 +49,7 @@ const GpPage = () => {
       <div className={`container ${loading ? "blurred" : ""}`}>
         <>
           {/* Stepper */}
-          <div className="stepper">
+          {/* <div className="stepper">
             <div className="step active">
               <div className="step-number">1</div>
               <div className="step-label">
@@ -89,8 +90,8 @@ const GpPage = () => {
                 <i className="fas fa-ring"></i>
               </div>
             </div>
-          </div>
-
+          </div> */}
+          <Tab />
           {/* Header */}
           <div className="row mt-4">
             <div className="col-md-7">
