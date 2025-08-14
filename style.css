@@ -267,3 +267,171 @@
     gap: 8px;
   }
 }
+.elegant-header {
+  text-align: left;
+  margin-bottom: 2rem; /* slightly tighter spacing */
+}
+
+.elegant-header h1 {
+  font-family: 'Playfair Display', serif; /* Classic luxury font */
+  font-size: 2rem; /* smaller size */
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 0.5px; /* slightly tighter */
+  line-height: 1.3;
+  background: linear-gradient(90deg, #d4af7f, #b5895f); /* subtle gold gradient */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.elegant-header p {
+  font-family: 'Lora', serif;
+  font-size: 0.95rem; /* smaller, subtle paragraph */
+  color: #555;
+  max-width: 650px;
+  line-height: 1.5;
+  letter-spacing: 0.4px;
+}
+.premium-card {
+  border-radius: 20px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(212, 175, 127, 0.4); /* subtle gold border */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 0 10px rgba(212, 175, 127, 0.2);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.premium-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 0 15px rgba(212, 175, 127, 0.35);
+}
+
+.product-container {
+  position: relative;
+  width: 100%;
+  padding-top: 100%; /* maintain square */
+  overflow: hidden;
+  border-bottom: 1px solid rgba(212, 175, 127, 0.2); /* subtle divider */
+  background: linear-gradient(145deg, #fffaf6, #fef9f5); /* soft gradient background */
+}
+
+.default-image,
+.hover-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity 0.4s ease;
+}
+
+.hover-image {
+  opacity: 0;
+}
+
+.premium-card:hover .hover-image {
+  opacity: 1;
+}
+
+.premium-card:hover .default-image {
+  opacity: 0.7; /* slightly fade default image for elegance */
+}
+
+.content-ring-box {
+  padding: 1rem 1.2rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.ring-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.3rem;
+  letter-spacing: 0.5px;
+}
+
+.ring-price {
+  font-family: 'Lora', serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #555;
+  letter-spacing: 0.4px;
+}
+
+.premium-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: linear-gradient(45deg, #d4af7f, #b5895f);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  text-transform: uppercase;
+}
+.filter-row {
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-dropdown {
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #d4af7f; /* subtle gold */
+  background: linear-gradient(145deg, #fffaf6, #fef9f5);
+  color: #333;
+  font-family: 'Lora', serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  appearance: none; /* remove default arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  position: relative;
+}
+
+.filter-dropdown:focus {
+  outline: none;
+  border-color: #b5895f;
+  box-shadow: 0 0 8px rgba(212, 175, 127, 0.5);
+  background: #fff8f2;
+}
+
+.filter-dropdown option {
+  font-family: 'Lora', serif;
+  color: #333;
+}
+
+.filter-checkbox {
+  display: flex;
+  align-items: center;
+  font-family: 'Lora', serif;
+  font-size: 0.95rem;
+  color: #333;
+  cursor: pointer;
+}
+
+.filter-checkbox input[type="checkbox"] {
+  margin-right: 6px;
+  accent-color: #d4af7f; /* gold check */
+}
+
+/* Add a custom arrow */
+.filter-dropdown::after {
+  content: '▼';
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #d4af7f;
+  font-size: 0.7rem;
+}

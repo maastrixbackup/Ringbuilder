@@ -1,18 +1,19 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setSelectedSetting } from "../../redux/ringBuilderSlice";
 // import { useRingBuilder } from "../../context/RingBuilderContext";
 import { baseUrl } from "../../utils/utils";
 import Loader from "../../utils/loader";
 import Tab from "../Tab";
-import { useDispatch } from "react-redux";
-import { setSelectedSetting } from "../../redux/ringBuilderSlice";
-const GpPage = () => {
+import Header from "../Header";
+
+const Setting = () => {
   const [loading, setLoading] = useState(true);
   const [ringStyles, setRingStyles] = useState([]);
   const [allRings, setAllRings] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // const { setSelectedSetting } = useRingBuilder();
   const [searchParams] = useSearchParams();
   const [filters, setFilters] = useState({});
   const [filterOptions, setFilterOptions] = useState({});
@@ -110,21 +111,17 @@ const GpPage = () => {
   };
 
   return (
-    <section className="mt-2">
-      <div className={`container ${loading ? "blurred" : ""}`}>
-        <>
+    <>
+      <Header />
+      <section className="mt-24">
+        <div className={`container ${loading ? "blurred" : ""}`}>
           <Tab />
           <div className="row mt-4">
-            <div className="col-md-7">
-              <h1 className="engaging-ring">
-                Engagement Rings: Choose Your Perfect Setting{" "}
-                <span className="disable">[{allRings.length}]</span>
-              </h1>
-              <p className="paragragh-engaging-ring pt-3">
-                Our selection of engagement ring settings includes every metal
-                and every style. Yellow gold, white gold, platinum, and rose
-                gold; vintage, modern, classic or trendy — we have the perfect
-                ring.
+            <div className="page-header elegant-header">
+              <h1>Discover Your Perfect Engagement Ring</h1>
+              <p>
+                Explore our curated collection of timeless settings, crafted
+                with precision and designed to celebrate your unique love story.
               </p>
             </div>
 
@@ -153,8 +150,7 @@ const GpPage = () => {
           </div>
 
           <div className="col-md-12 mt-3">
-            <div className="filter-row d-flex flex-wrap align-items-center gap-2">
-              {/* Ring Size */}
+            <div className="filter-row d-flex flex-wrap align-items-center ">
               <select
                 className="filter-dropdown"
                 value={filters.ring_size || ""}
@@ -235,7 +231,7 @@ const GpPage = () => {
               allRings.map((ring) => (
                 <div className="col-md-3 mb-4" key={ring.id}>
                   <div
-                    className="ring-product-box"
+                    className="ring-product-box premium-card"
                     onClick={() => {
                       const newSetting = {
                         label: ring.title,
@@ -246,7 +242,6 @@ const GpPage = () => {
                       // localStorage.removeItem("selectedDiamond");
                       navigate("/ring-details");
                     }}
-                    style={{ cursor: "pointer" }}
                   >
                     <div className="ring-image-box">
                       <div className="product-container">
@@ -264,19 +259,21 @@ const GpPage = () => {
                     </div>
 
                     <div className="content-ring-box">
-                      <p>{ring.title}</p>
-                      <p>${ring.ring_price} (Setting Price)</p>
+                      <p className="ring-title">{ring.title}</p>
+                      <p className="ring-price">
+                        ${ring.ring_price} (Setting Price)
+                      </p>
                     </div>
                   </div>
                 </div>
               ))
             )}
           </div>
-        </>
-      </div>
-      {loading && <Loader isLoading={loading} />}
-    </section>
+        </div>
+        {loading && <Loader isLoading={loading} />}
+      </section>
+    </>
   );
 };
 
-export default GpPage;
+export default Setting;
