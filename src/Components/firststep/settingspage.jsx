@@ -1,88 +1,119 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useRingBuilder } from "../../context/RingBuilderContext";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+// import { useRingBuilder } from "../../context/RingBuilderContext";
 import { baseUrl } from "../../utils/utils";
 import Loader from "../../utils/loader";
-
+import Tab from "../Tab";
+import { useDispatch } from "react-redux";
+import { setSelectedSetting } from "../../redux/ringBuilderSlice";
 const GpPage = () => {
   const [loading, setLoading] = useState(true);
-  const [selectedStyle, setSelectedStyle] = useState("All");
   const [ringStyles, setRingStyles] = useState([]);
   const [allRings, setAllRings] = useState([]);
   const navigate = useNavigate();
-  const { setSelectedSetting } = useRingBuilder();
+  const dispatch = useDispatch();
+  // const { setSelectedSetting } = useRingBuilder();
+  const [searchParams] = useSearchParams();
+  const [filters, setFilters] = useState({});
+  const [filterOptions, setFilterOptions] = useState({});
+  useEffect(() => {
+    getRingFilterData();
+  }, []);
 
-  const getFilters = async (styleTitle = null) => {
+  const getRingFilterData = async () => {
     try {
       setLoading(true);
-      const payload = styleTitle ? { ring_style: styleTitle } : {};
-
-      const response = await fetch(baseUrl() + "ring-products", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
+      const res = await fetch(baseUrl() + "getRingFilterData", {
+        method: "GET",
       });
-
-      const result = await response.json();
-      if (result.status && result.data) {
-        // Only set styles on first load (when no filter is applied)
-        if (!styleTitle) {
-          setRingStyles(result.data.style || []);
-        }
-        setAllRings(result.data.products || []);
-      }
+      const result = await res.json();
+      setFilterOptions(result.data);
     } catch (error) {
-      console.error("Error occurred while fetching the data", error);
+      console.error("Error occured while fetching the data", error);
     } finally {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    const paramsObj = {};
+    for (const [key, value] of searchParams.entries()) {
+      paramsObj[key] = value;
+    }
+    setFilters(paramsObj);
+  }, []);
 
   useEffect(() => {
-    getFilters();
-  }, []);
+    const cleanFilters = Object.fromEntries(
+      Object.entries(filters).filter(([_, v]) => v && v.trim() !== "")
+    );
+
+    const queryString = new URLSearchParams(cleanFilters).toString();
+
+    navigate(`/rings/${queryString ? `?${queryString}` : ""}`, {
+      replace: true,
+    });
+    setLoading(true);
+    fetch(`${baseUrl()}ring-products?${queryString}`)
+      .then((res) => res.json())
+      .then((result) => {
+        if (result?.status) {
+          setAllRings(result.data.products || []);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, [filters, navigate]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setLoading(true);
+
+    fetch(`${baseUrl()}ring-products?${searchParams.toString()}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result?.status && result?.data) {
+          setRingStyles(result.data.style || []);
+          setAllRings(result.data.products || []);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (err.name !== "AbortError") {
+          console.error(err);
+          setLoading(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, [searchParams]);
+
+  const updateFilter = (key, value) => {
+    setFilters((prev) => {
+      // if (key === "ring-type") {
+      if (prev[key] === value) {
+        const { [key]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [key]: value };
+      // }
+
+      // return { ...prev, [key]: value };
+    });
+  };
 
   return (
     <section className="mt-2">
       <div className={`container ${loading ? "blurred" : ""}`}>
         <>
-          {/* Stepper */}
-          <div className="stepper">
-            <div className="step active">
-              <div className="step-number">1</div>
-              <div className="step-label">
-                <small>Choose a</small>
-                <strong>SETTING</strong>
-              </div>
-              <div className="step-icon">
-                <i className="fas fa-cogs"></i>
-              </div>
-            </div>
-            <div className="step">
-              <div className="step-number">2</div>
-              <div className="step-label">
-                <small>Choose a</small>
-                <strong>DIAMOND</strong>
-              </div>
-              <div className="step-icon">
-                <i className="far fa-gem"></i>
-              </div>
-            </div>
-            <div className="step">
-              <div className="step-number">3</div>
-              <div className="step-label">
-                <small>Complete</small>
-                <strong>RING</strong>
-              </div>
-              <div className="step-icon">
-                <i className="fas fa-ring"></i>
-              </div>
-            </div>
-          </div>
-
-          {/* Header */}
+          <Tab />
           <div className="row mt-4">
             <div className="col-md-7">
               <h1 className="engaging-ring">
@@ -99,24 +130,18 @@ const GpPage = () => {
 
             <div className="col-md-12">
               <div className="ring-style-list d-flex flex-wrap gap-2">
-                {ringStyles.map((style) => (
+                {filterOptions.style?.map((style) => (
                   <div
                     key={style.id}
                     className={`ring-style-item ${
-                      selectedStyle === style.title ? "border border-dark" : ""
+                      filters["ring_style"] === style.title
+                        ? "!border !border-gray-500 !bg-green-200"
+                        : ""
                     }`}
-                    onClick={() => {
-                      setSelectedStyle(style.title);
-                      getFilters(style.title);
-                    }}
-                    style={{ cursor: "pointer" }}
+                    onClick={() => updateFilter("ring_style", style.title)}
                   >
                     <img
-                      src={
-                        style.image && style.image !== ""
-                          ? style.image
-                          : "/settings/fallback-style.svg"
-                      }
+                      src={style.image || "/settings/fallback-style.svg"}
                       alt={style.title}
                       style={{ width: 50, height: 50, objectFit: "contain" }}
                     />
@@ -124,6 +149,80 @@ const GpPage = () => {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+
+          <div className="col-md-12 mt-3">
+            <div className="filter-row d-flex flex-wrap align-items-center gap-2">
+              {/* Ring Size */}
+              <select
+                className="filter-dropdown"
+                value={filters.ring_size || ""}
+                onChange={(e) => updateFilter("ring_size", e.target.value)}
+              >
+                <option value="">Ring Size</option>
+                {filterOptions.size?.map((s) => (
+                  <option key={s.id} value={s.size}>
+                    {s.size}
+                  </option>
+                ))}
+              </select>
+
+              {/* Metal Colors */}
+              <select
+                className="filter-dropdown"
+                value={filters.ring_color || ""}
+                onChange={(e) => updateFilter("ring_color", e.target.value)}
+              >
+                <option value="">Metal</option>
+                {filterOptions.colors?.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+
+              {/* Width */}
+              <select
+                className="filter-dropdown"
+                value={filters.ring_width || ""}
+                onChange={(e) => updateFilter("ring_width", e.target.value)}
+              >
+                <option value="">Width</option>
+                {filterOptions.width?.map((w) => (
+                  <option key={w.id} value={w.id}>
+                    {w.width}
+                  </option>
+                ))}
+              </select>
+
+              {/* Shapes */}
+              <select
+                className="filter-dropdown"
+                value={filters.diamond_shape || ""}
+                onChange={(e) => updateFilter("diamond_shape", e.target.value)}
+              >
+                <option value="">Can Be Set With</option>
+                {filterOptions.shapes?.map((shape) => (
+                  <option key={shape.id} value={shape.title}>
+                    {shape.title}
+                  </option>
+                ))}
+              </select>
+
+              {/* Karat */}
+              <select
+                className="filter-dropdown"
+                value={filters.ring_karat || ""}
+                onChange={(e) => updateFilter("ring_karat", e.target.value)}
+              >
+                <option value="">Karat</option>
+                {filterOptions.karats?.map((k) => (
+                  <option key={k.id} value={k.id}>
+                    {k.title}K
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -141,10 +240,11 @@ const GpPage = () => {
                       const newSetting = {
                         label: ring.title,
                         price: `$${ring.ring_price}`,
+                        image: ring.normal_image,
                       };
-                      setSelectedSetting(newSetting);
-                      localStorage.removeItem("selectedDiamond");
-                      navigate("/diamonds");
+                      dispatch(setSelectedSetting(newSetting));
+                      // localStorage.removeItem("selectedDiamond");
+                      navigate("/ring-details");
                     }}
                     style={{ cursor: "pointer" }}
                   >

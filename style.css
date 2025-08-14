@@ -1,3 +1,4 @@
+@import "tailwindcss";
 .container-fluid {
   padding: 0 32px;
 }
@@ -24,7 +25,7 @@
 }
 
 .step.active {
-  /* background-color: #93d0e9; */
+  background-color: #c9e1e7;
 }
 
 .step-number {
@@ -70,7 +71,6 @@
   color: #000;
 }
 
-/* Clean arrow shape */
 .step::after {
   content: "";
   position: absolute;
@@ -80,11 +80,11 @@
   height: 0;
   border-top: 40px solid transparent;
   border-bottom: 40px solid transparent;
-  border-left: 20px solid #fbfbfb; /* same as step background */
+  border-left: 20px solid #fbfbfb; 
   z-index: 3;
 }
 
-/* Optional: cover unwanted line at junction */
+
 .step::before {
   content: "";
   position: absolute;
@@ -167,7 +167,6 @@
   color: #333;
 }
 
-/* Active (Selected) Style */
 .ring-style-item.active {
   border: 2px solid #007bff;
   background-color: rgba(0, 123, 255, 0.1);
@@ -177,24 +176,10 @@
   position: relative;
 }
 
-.product-container .default-image {
-  /* position: absolute;
-  top: 0;
-  left: 0; */
-  /* width: 100%; */
-  /* height: 400px; */
-}
-
 .product-container .hover-image {
-  /* position: absolute;
-  top: 0;
-  left: 0; */
   display: none;
-  /* width: 100%; */
-  /* height: 400px; */
 }
 
-/* On hover, hide the default image and show the hover image */
 .product-container:hover .default-image {
   display: none;
 }
@@ -204,27 +189,24 @@
 }
 .product-container {
   position: relative;
-  /* height: 400px; */
+
   width: 100%;
 }
 
 .product-container img {
-  /* position: absolute; */
-  /* top: 0;
-  left: 0; */
-  transition: opacity 0.3s ease-in-out; /* Add a smooth transition */
+  transition: opacity 0.3s ease-in-out;
 }
 
 .product-container .hover-image {
-  opacity: 0; /* Initially transparent */
+  opacity: 0;
 }
 
 .product-container:hover .default-image {
-  opacity: 0; /* Fade out the default image */
+  opacity: 0;
 }
 
 .product-container:hover .hover-image {
-  opacity: 1; /* Fade in the hover image */
+  opacity: 1;
 }
 
 .content-ring-box {
@@ -248,4 +230,40 @@
 .shape-box img {
   height: 24px;
   width: auto;
+}
+
+/* ---------------------------------------------------------- */
+
+.filter-row {
+  margin-top: 16px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.filter-dropdown {
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  border-radius: 4px;
+  background-color: #fff;
+  font-size: 14px;
+  appearance: none;
+}
+
+.filter-dropdown:focus {
+  outline: none;
+  border-color: #999;
+}
+
+.filter-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;
+    gap: 8px;
+  }
 }

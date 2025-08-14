@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useRingBuilder } from "../../context/RingBuilderContext";
 import { baseUrl } from "../../utils/utils";
 import Loader from "../../utils/loader";
+import Tab2 from "../Tab2";
 
 const DiamondsPage = () => {
   const navigate = useNavigate();
@@ -42,49 +43,14 @@ const DiamondsPage = () => {
   };
 
   useEffect(() => {
-    getDiamonds(); // fetch all diamonds on mount
+    getDiamonds();
   }, []);
 
   return (
     <section className="mt-2">
       <div className={`container ${loading ? "blurred" : ""}`}>
         <>
-          {/* Stepper */}
-          <div className="stepper">
-            <div className="step">
-              <div className="step-number">1</div>
-              <div className="step-label">
-                <small>Choose a</small>
-                <strong>SETTING</strong>
-              </div>
-              <div className="step-icon">
-                <i className="fas fa-cogs"></i>
-              </div>
-            </div>
-
-            <div className="step active">
-              <div className="step-number">2</div>
-              <div className="step-label">
-                <small>Choose a</small>
-                <strong>DIAMOND</strong>
-              </div>
-              <div className="step-icon">
-                <i className="far fa-gem"></i>
-              </div>
-            </div>
-
-            <div className="step">
-              <div className="step-number">3</div>
-              <div className="step-label">
-                <small>Complete</small>
-                <strong>RING</strong>
-              </div>
-              <div className="step-icon">
-                <i className="fas fa-ring"></i>
-              </div>
-            </div>
-          </div>
-
+          <Tab2 />
           <div className="back-to-gallery mt-3 mb-2">
             <span
               onClick={() => navigate("/")}
