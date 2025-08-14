@@ -17,22 +17,21 @@ import DummyPage from "./Components/firststep/dummyPage";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import Loader from "../src/utils/loader";
+import Home from "./pages/Home";
 
 export default function App() {
   return (
     <RingBuilderProvider>
-      <Router basename="/ring_builder">
-        <Suspense fallback={<Loader />}>
-          <Routes>
-            {/* <Route path="/" element={<Navigate to="/settings" />} /> */}
-            <Route path="/rings" element={<SettingsPage />} />
-            <Route path="/diamonds" element={<DiamondsPage />} />
-            <Route path="/complete-ring" element={<CompleteRingPage />} />
-            <Route path="/ring-details" element={<RingDetails />} />
-
-            <Route path="/" element={<DummyPage />} />
-          </Routes>
-        </Suspense>
+      <Router>
+          <Suspense fallback={<Loader />}>
+            <Routes>
+              <Route path="/rings" element={<SettingsPage />} />
+              <Route path="/diamonds" element={<DiamondsPage />} />
+              <Route path="/complete-ring" element={<CompleteRingPage />} />
+              <Route path="/ring-details" element={<RingDetails />} />
+              <Route path="/" element={<Home />} />
+            </Routes>
+          </Suspense>
       </Router>
     </RingBuilderProvider>
   );
