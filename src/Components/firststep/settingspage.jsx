@@ -1,19 +1,39 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useRingBuilder } from "../../context/RingBuilderContext";
+// import { useRingBuilder } from "../../context/RingBuilderContext";
 import { baseUrl } from "../../utils/utils";
 import Loader from "../../utils/loader";
 import Tab from "../Tab";
-
+import { useDispatch } from "react-redux";
+import { setSelectedSetting } from "../../redux/ringBuilderSlice";
 const GpPage = () => {
   const [loading, setLoading] = useState(true);
   const [ringStyles, setRingStyles] = useState([]);
   const [allRings, setAllRings] = useState([]);
   const navigate = useNavigate();
-  const { setSelectedSetting } = useRingBuilder();
+  const dispatch = useDispatch();
+  // const { setSelectedSetting } = useRingBuilder();
   const [searchParams] = useSearchParams();
   const [filters, setFilters] = useState({});
+  const [filterOptions, setFilterOptions] = useState({});
+  useEffect(() => {
+    getRingFilterData();
+  }, []);
 
+  const getRingFilterData = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(baseUrl() + "getRingFilterData", {
+        method: "GET",
+      });
+      const result = await res.json();
+      setFilterOptions(result.data);
+    } catch (error) {
+      console.error("Error occured while fetching the data", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     const paramsObj = {};
     for (const [key, value] of searchParams.entries()) {
@@ -29,9 +49,22 @@ const GpPage = () => {
 
     const queryString = new URLSearchParams(cleanFilters).toString();
 
-    navigate(`/ring_builder/${queryString ? `?${queryString}` : ""}`, {
+    navigate(`/rings/${queryString ? `?${queryString}` : ""}`, {
       replace: true,
     });
+    setLoading(true);
+    fetch(`${baseUrl()}ring-products?${queryString}`)
+      .then((res) => res.json())
+      .then((result) => {
+        if (result?.status) {
+          setAllRings(result.data.products || []);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
   }, [filters, navigate]);
 
   useEffect(() => {
@@ -46,7 +79,7 @@ const GpPage = () => {
     })
       .then((res) => res.json())
       .then((result) => {
-        if (result.status && result.data) {
+        if (result?.status && result?.data) {
           setRingStyles(result.data.style || []);
           setAllRings(result.data.products || []);
           setLoading(false);
@@ -64,15 +97,15 @@ const GpPage = () => {
 
   const updateFilter = (key, value) => {
     setFilters((prev) => {
-      if (key === "ring-type") {
-        if (prev[key] === value) {
-          const { [key]: _, ...rest } = prev;
-          return rest;
-        }
-        return { ...prev, [key]: value };
+      // if (key === "ring-type") {
+      if (prev[key] === value) {
+        const { [key]: _, ...rest } = prev;
+        return rest;
       }
-
       return { ...prev, [key]: value };
+      // }
+
+      // return { ...prev, [key]: value };
     });
   };
 
@@ -97,24 +130,18 @@ const GpPage = () => {
 
             <div className="col-md-12">
               <div className="ring-style-list d-flex flex-wrap gap-2">
-                {ringStyles.map((style) => (
+                {filterOptions.style?.map((style) => (
                   <div
                     key={style.id}
                     className={`ring-style-item ${
-                      filters["ring-type"] === style.title
+                      filters["ring_style"] === style.title
                         ? "!border !border-gray-500 !bg-green-200"
                         : ""
                     }`}
-                    onClick={() => {
-                      updateFilter("ring-type", style.title);
-                    }}
+                    onClick={() => updateFilter("ring_style", style.title)}
                   >
                     <img
-                      src={
-                        style.image && style.image !== ""
-                          ? style.image
-                          : "/settings/fallback-style.svg"
-                      }
+                      src={style.image || "/settings/fallback-style.svg"}
                       alt={style.title}
                       style={{ width: 50, height: 50, objectFit: "contain" }}
                     />
@@ -127,73 +154,74 @@ const GpPage = () => {
 
           <div className="col-md-12 mt-3">
             <div className="filter-row d-flex flex-wrap align-items-center gap-2">
+              {/* Ring Size */}
               <select
                 className="filter-dropdown"
-                value={filters.size}
-                onChange={(e) => updateFilter("size", e.target.value)}
+                value={filters.ring_size || ""}
+                onChange={(e) => updateFilter("ring_size", e.target.value)}
               >
                 <option value="">Ring Size</option>
-                <option value="4">4</option>
-                <option value="4.5">4.5</option>
-                <option value="5">5</option>
+                {filterOptions.size?.map((s) => (
+                  <option key={s.id} value={s.size}>
+                    {s.size}
+                  </option>
+                ))}
               </select>
+
+              {/* Metal Colors */}
               <select
                 className="filter-dropdown"
-                value={filters.metal}
-                onChange={(e) => updateFilter("metal", e.target.value)}
+                value={filters.ring_color || ""}
+                onChange={(e) => updateFilter("ring_color", e.target.value)}
               >
                 <option value="">Metal</option>
-                <option value="14K White Gold">14K White Gold</option>
-                <option value="14K Yellow Gold">14K Yellow Gold</option>
+                {filterOptions.colors?.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
               </select>
+
+              {/* Width */}
               <select
                 className="filter-dropdown"
-                value={filters.width}
-                onChange={(e) => updateFilter("width", e.target.value)}
+                value={filters.ring_width || ""}
+                onChange={(e) => updateFilter("ring_width", e.target.value)}
               >
                 <option value="">Width</option>
-                <option value="1.5 mm">1.5 mm</option>
-                <option value="2 mm">2 mm</option>
-                <option value="2.5 mm">2.5 mm</option>
+                {filterOptions.width?.map((w) => (
+                  <option key={w.id} value={w.id}>
+                    {w.width}
+                  </option>
+                ))}
               </select>
+
+              {/* Shapes */}
               <select
                 className="filter-dropdown"
-                value={filters["set-with"]}
-                onChange={(e) => updateFilter("set-with", e.target.value)}
+                value={filters.diamond_shape || ""}
+                onChange={(e) => updateFilter("diamond_shape", e.target.value)}
               >
                 <option value="">Can Be Set With</option>
-                <option value="Round">Round</option>
-                <option value="Princess">Princess</option>
+                {filterOptions.shapes?.map((shape) => (
+                  <option key={shape.id} value={shape.title}>
+                    {shape.title}
+                  </option>
+                ))}
               </select>
+
+              {/* Karat */}
               <select
                 className="filter-dropdown"
-                value={filters.price}
-                onChange={(e) => updateFilter("price", e.target.value)}
+                value={filters.ring_karat || ""}
+                onChange={(e) => updateFilter("ring_karat", e.target.value)}
               >
-                <option value="">Price</option>
-                <option value="<1000">Under $1,000</option>
-                <option value="1000–2500">$1,000–$2,500</option>
-              </select>
-              <label className="filter-checkbox">
-                <input type="checkbox" /> On Sale
-              </label>
-              <select
-                className="filter-dropdown"
-                value={filters["date-by"]}
-                onChange={(e) => updateFilter("date-by", e.target.value)}
-              >
-                <option value="">Shipping Date by</option>
-                <option value="1 Week">1 Week</option>
-                <option value="2 Weeks">2 Weeks</option>
-              </select>
-              <select
-                className="filter-dropdown"
-                value={filters["sort-by"]}
-                onChange={(e) => updateFilter("sort-by", e.target.value)}
-              >
-                <option value="">Sort By</option>
-                <option value="Best Sellers">Best Sellers</option>
-                <option value="Price: Low to High">Price: Low to High</option>
+                <option value="">Karat</option>
+                {filterOptions.karats?.map((k) => (
+                  <option key={k.id} value={k.id}>
+                    {k.title}K
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -212,10 +240,11 @@ const GpPage = () => {
                       const newSetting = {
                         label: ring.title,
                         price: `$${ring.ring_price}`,
+                        image: ring.normal_image,
                       };
-                      setSelectedSetting(newSetting);
-                      localStorage.removeItem("selectedDiamond");
-                      navigate("/diamonds");
+                      dispatch(setSelectedSetting(newSetting));
+                      // localStorage.removeItem("selectedDiamond");
+                      navigate("/ring-details");
                     }}
                     style={{ cursor: "pointer" }}
                   >

@@ -21,7 +21,7 @@ import Loader from "../src/utils/loader";
 export default function App() {
   return (
     <RingBuilderProvider>
-      <Router basename="/">
+      <Router basename="/ring_builder">
         <Suspense fallback={<Loader />}>
           <Routes>
             {/* <Route path="/" element={<Navigate to="/settings" />} /> */}
@@ -30,7 +30,7 @@ export default function App() {
             <Route path="/complete-ring" element={<CompleteRingPage />} />
             <Route path="/ring-details" element={<RingDetails />} />
 
-            <Route path="/test" element={<DummyPage />} />
+            <Route path="/" element={<DummyPage />} />
           </Routes>
         </Suspense>
       </Router>

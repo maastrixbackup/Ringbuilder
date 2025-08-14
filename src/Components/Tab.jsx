@@ -1,52 +1,101 @@
-import { useState } from "react";
-
-const STEPS = [
-  {
-    key: "style",
-    label: "Setting",
-    tagline: "Choose a Setting",
-    price: "$1,200",
-    img: "https://images.unsplash.com/photo-1543294001-f7cd5d7fb516?q=80&w=200&auto=format&fit=crop",
-  },
-  {
-    key: "metal",
-    label: "Setting",
-    tagline: "View your Setting",
-    price: "$1,200",
-    img: "https://images.unsplash.com/photo-1543294001-f7cd5d7fb516?q=80&w=200&auto=format&fit=crop",
-  },
-  {
-    key: "stone",
-    label: "Diamond",
-    tagline: "Choose a Diamond",
-    price: "$3,500",
-    img: "https://images.unsplash.com/photo-1543294001-f7cd5d7fb516?q=80&w=200&auto=format&fit=crop",
-  },
-  {
-    key: "customize",
-    label: "Diamond",
-    tagline: "View Diamond",
-    price: "$3,500",
-    img: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=200&auto=format&fit=crop",
-  },
-  {
-    key: "review",
-    label: "Complete Ring",
-    tagline: "Checkout",
-    price: "$4,700",
-    img: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?q=80&w=200&auto=format&fit=crop",
-  },
-];
+import { useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {
+  clearSelectedSetting,
+  clearSelectedStone,
+  setCurrentStep,
+} from "../redux/ringBuilderSlice";
 
 export default function RingBuilderArrowStepperImages() {
-  const [current, setCurrent] = useState(0);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { currentStep, selectedSetting, selectedStone, mode } = useSelector(
+    (s) => s.ringBuilder
+  );
+
+  const STEPS = useMemo(() => {
+    const stoneLabel = mode === "gemstone" ? "Gemstone" : "Diamond";
+    return [
+      {
+        key: "style",
+        label: "Setting",
+        tagline: "Choose a Setting",
+        img: selectedSetting?.image,
+        price: selectedSetting?.price,
+      },
+      {
+        key: "metal",
+        label: "Setting",
+        tagline: "View your Setting",
+        img: selectedSetting?.image,
+        price: selectedSetting?.price,
+      },
+      {
+        key: "stone",
+        label: stoneLabel,
+        tagline: `Choose a ${stoneLabel}`,
+        img: selectedStone?.image,
+        price: selectedStone?.price,
+      },
+      {
+        key: "customize",
+        label: stoneLabel,
+        tagline: `View ${stoneLabel}`,
+        img: selectedStone?.image,
+        price: selectedStone?.price,
+      },
+      {
+        key: "review",
+        label: "Complete Ring",
+        tagline: "Checkout",
+        img: null,
+        price: null,
+      },
+    ];
+  }, [selectedSetting, selectedStone, mode]);
+
+  const goView = (index) => {
+    switch (index) {
+      case 0:
+        navigate("/rings");
+        break;
+      case 1:
+        navigate("/ring-details");
+        break;
+      case 2:
+      case 3:
+        navigate(mode === "gemstone" ? "/gemstones" : "/diamonds");
+        break;
+      default:
+        break;
+    }
+  };
+
+  const doDelete = (index) => {
+    switch (index) {
+      case 0: // delete setting selection
+      case 1:
+        dispatch(clearSelectedSetting());
+        navigate("/rings");
+        break;
+      case 2:
+      case 3:
+        dispatch(clearSelectedStone());
+        navigate(mode === "gemstone" ? "/gemstones" : "/diamonds");
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto mt-6">
       <div className="flex w-full">
         {STEPS.map((step, index) => {
-          const isCompleted = index < current;
-          const isActive = index === current;
+          const isCompleted = index < currentStep - 1;
+          const isActive = index === currentStep - 1;
+          const isFuture = index > currentStep - 1;
 
           const baseColor = isActive
             ? "bg-yellow-400 text-black shadow-lg scale-105"
@@ -66,11 +115,19 @@ export default function RingBuilderArrowStepperImages() {
               }}
             >
               <button
-                onClick={() => setCurrent(index)}
+                disabled={isFuture}
+                onClick={() => {
+                  if (!isFuture) {
+                    if (isCompleted || isActive) goView(index);
+                    dispatch(setCurrentStep(index + 1));
+                  }
+                }}
                 className={`flex items-center justify-between h-22 w-full border ${baseColor} transition-all px-4`}
               >
                 <div className="flex flex-col items-start text-left">
-                  <span className="text-sm font-semibold text-black">{step.label}</span>
+                  <span className="text-sm font-semibold text-black">
+                    {step.label}
+                  </span>
                   <span className="text-xs">{step.tagline}</span>
                   <span className="text-sm font-bold text-yellow-700 mt-1">
                     {isCompleted && step.price}
@@ -80,10 +137,11 @@ export default function RingBuilderArrowStepperImages() {
                 <div className="flex flex-col items-center">
                   {index !== 4 && (
                     <div
-                      className={`w-12 h-12 overflow-hidden rounded-md border shadow-sm 
-                    ${isActive ? "border-yellow-500" : "!border-gray-400"}`}
+                      className={`w-12 h-12 overflow-hidden rounded-md border shadow-sm ${
+                        isActive ? "border-yellow-500" : "!border-gray-400"
+                      }`}
                     >
-                      {isCompleted && index !== 4 && (
+                      {isCompleted && step.img && (
                         <img
                           src={step.img}
                           alt={step.label}
@@ -96,12 +154,24 @@ export default function RingBuilderArrowStepperImages() {
                   <div className="flex gap-2 mt-1 text-xs">
                     {isCompleted && (
                       <>
-                        <button className="text-blue-600 hover:underline">
+                        <button
+                          className="text-blue-600 hover:underline"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            goView(index);
+                          }}
+                        >
                           View
                         </button>
-                        <button className="text-red-600 hover:underline">
+                        <button
+                          className="text-red-600 hover:underline"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            doDelete(index);
+                          }}
+                        >
                           Delete
-                        </button>{" "}
+                        </button>
                       </>
                     )}
                   </div>
