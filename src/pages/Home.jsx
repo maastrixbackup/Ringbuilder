@@ -20,9 +20,7 @@ export default function LuxuryHomePage() {
     <div className="bg-white text-gray-900 font-serif">
       <Header />
 
-      {/* HERO */}
       <section className="relative h-screen flex items-center justify-center pt-16 overflow-hidden">
-        {/* Background */}
         <motion.img
           src="https://res2.weblium.site/res/5e42b963ba05900021d32109/5e42d65b62dd7a002173a24b_optimized_1329.webp"
           alt="Luxury Diamond Ring"
@@ -31,9 +29,7 @@ export default function LuxuryHomePage() {
           animate={{ scale: 1, opacity: 0.7 }}
           transition={{ duration: 2, ease: "easeOut" }}
         />
-        {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/70" />
-        {/* Content */}
         <motion.div
           initial="hidden"
           animate="show"
@@ -64,7 +60,6 @@ export default function LuxuryHomePage() {
         </motion.div>
       </section>
 
-      {/* SIGNATURE COLLECTION */}
       <section className="py-24 max-w-7xl mx-auto px-6">
         <motion.div
           initial="hidden"
@@ -124,7 +119,6 @@ export default function LuxuryHomePage() {
         </motion.div>
       </section>
 
-      {/* CRAFTSMANSHIP */}
       <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center px-6">
           <motion.img

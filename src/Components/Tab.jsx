@@ -5,7 +5,7 @@ import {
   clearSelectedSetting,
   clearSelectedStone,
   setCurrentStep,
-} from "../redux/ringBuilderSlice";
+} from "../store/ringBuilderSlice";
 
 export default function RingBuilderArrowStepperImages() {
   const dispatch = useDispatch();

@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Tab from "../Tab";
+import Tab from "../Components/Tab";
 import { useDispatch, useSelector } from "react-redux";
-import { openChoiceModal, closeChoiceModal, setCurrentStep, setMode } from "../../redux/ringBuilderSlice";
+import { openChoiceModal, closeChoiceModal, setCurrentStep, setMode } from "../store/ringBuilderSlice";
 
 const RingDetailsPage = () => {
   const navigate = useNavigate();

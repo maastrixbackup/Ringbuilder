@@ -1,22 +1,21 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setSelectedSetting } from "../../redux/ringBuilderSlice";
-// import { useRingBuilder } from "../../context/RingBuilderContext";
-import { baseUrl } from "../../utils/utils";
-import Loader from "../../utils/loader";
-import Tab from "../Tab";
-import Header from "../Header";
+import { setSelectedSetting } from "../store/ringBuilderSlice";
+import { baseUrl } from "../utils/utils";
+import Loader from "../utils/loader";
+import Tab from "../Components/Tab";
+import Header from "../Components/Header";
 
 const Setting = () => {
   const [loading, setLoading] = useState(true);
-  const [ringStyles, setRingStyles] = useState([]);
   const [allRings, setAllRings] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const [filters, setFilters] = useState({});
   const [filterOptions, setFilterOptions] = useState({});
+
   useEffect(() => {
     getRingFilterData();
   }, []);
@@ -35,6 +34,7 @@ const Setting = () => {
       setLoading(false);
     }
   };
+  
   useEffect(() => {
     const paramsObj = {};
     for (const [key, value] of searchParams.entries()) {
@@ -54,6 +54,7 @@ const Setting = () => {
       replace: true,
     });
     setLoading(true);
+
     fetch(`${baseUrl()}ring-products?${queryString}`)
       .then((res) => res.json())
       .then((result) => {
@@ -67,34 +68,6 @@ const Setting = () => {
         setLoading(false);
       });
   }, [filters, navigate]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    setLoading(true);
-
-    fetch(`${baseUrl()}ring-products?${searchParams.toString()}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        if (result?.status && result?.data) {
-          setRingStyles(result.data.style || []);
-          setAllRings(result.data.products || []);
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (err.name !== "AbortError") {
-          console.error(err);
-          setLoading(false);
-        }
-      });
-
-    return () => controller.abort();
-  }, [searchParams]);
 
   const updateFilter = (key, value) => {
     setFilters((prev) => {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useRingBuilder } from "../../context/RingBuilderContext";
+import { useRingBuilder } from "../context/RingBuilderContext";
 import DiamondViewer from "./diamondViewer";
 import { useNavigate } from "react-router-dom";
 export default function CompleteRingPage() {
