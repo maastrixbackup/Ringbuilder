@@ -6,6 +6,8 @@ const RingBuilderContext = createContext();
 export const useRingBuilder = () => useContext(RingBuilderContext);
 
 export const RingBuilderProvider = ({ children }) => {
+  const [currentStep, setCurrentStep] = useState(1);
+
   const [selectedSetting, setSelectedSettingState] = useState(() => {
     const saved = localStorage.getItem("selectedSetting");
     return saved ? JSON.parse(saved) : null;
@@ -35,6 +37,8 @@ export const RingBuilderProvider = ({ children }) => {
         setSelectedSetting,
         selectedDiamond,
         setSelectedDiamond,
+        currentStep,
+        setCurrentStep,
       }}
     >
       {children}
