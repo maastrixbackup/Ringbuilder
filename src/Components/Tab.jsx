@@ -13,42 +13,27 @@ export default function RingBuilderArrowStepperImages() {
   const { currentStep, selectedSetting, selectedStone, mode } = useSelector(
     (s) => s.ringBuilder
   );
-
   const STEPS = useMemo(() => {
     const stoneLabel = mode === "gemstone" ? "Gemstone" : "Diamond";
     return [
       {
-        key: "style",
+        key: "setting",
         label: "Setting",
-        tagline: "Choose a Setting",
+        tagline: "Choose a",
         img: selectedSetting?.image,
         price: selectedSetting?.price,
       },
       {
-        key: "metal",
-        label: "Setting",
-        tagline: "View your Setting",
+        key: "diamond",
+        label: `${stoneLabel}`,
+        tagline: `Choose a`,
         img: selectedSetting?.image,
         price: selectedSetting?.price,
       },
       {
-        key: "stone",
-        label: stoneLabel,
-        tagline: `Choose a ${stoneLabel}`,
-        img: selectedStone?.image,
-        price: selectedStone?.price,
-      },
-      {
-        key: "customize",
-        label: stoneLabel,
-        tagline: `View ${stoneLabel}`,
-        img: selectedStone?.image,
-        price: selectedStone?.price,
-      },
-      {
-        key: "review",
-        label: "Complete Ring",
-        tagline: "Checkout",
+        key: "complete",
+        label: "Ring",
+        tagline: "Complete",
         img: null,
         price: null,
       },
@@ -74,7 +59,7 @@ export default function RingBuilderArrowStepperImages() {
 
   const doDelete = (index) => {
     switch (index) {
-      case 0: // delete setting selection
+      case 0:
       case 1:
         dispatch(clearSelectedSetting());
         navigate("/rings");
@@ -88,99 +73,147 @@ export default function RingBuilderArrowStepperImages() {
         break;
     }
   };
-
   return (
-    <div className="max-w-6xl mx-auto mt-6">
-      <div className="flex w-full">
-        {STEPS.map((step, index) => {
-          const isCompleted = index < currentStep - 1;
-          const isActive = index === currentStep - 1;
-          const isFuture = index > currentStep - 1;
+    <div className="flex max-w-6xl mx-auto mt-24 rounded overflow-hidden border border-gray-300">
+      {STEPS.map((step, index) => {
+        const isCompleted = index < currentStep - 1;
+        const isActive = index === currentStep - 1;
+        const isFuture = index > currentStep - 1;
 
-          const baseColor = isActive
-            ? "bg-yellow-400 text-black shadow-lg scale-105"
-            : isCompleted
-            ? "bg-green-400 text-black border-green-600 shadow-lg"
-            : "bg-gray-100 text-black border-2";
+        const highlightBorder = isActive
+          ? "#eab308"
+          : isCompleted
+          ? "#22c55e"
+          : "#d1d5db";
 
-          return (
+        return (
+          <div
+            key={step.key}
+            className="relative  flex-1 h-[100px] flex items-center justify-between px-6 py-4 bg-white"
+            style={{
+              borderRight:
+                index !== STEPS.length - 1
+                  ? "none"
+                  : `1px solid ${highlightBorder}`,
+              borderTop: `1px solid ${highlightBorder}`,
+              borderLeft: `1px solid ${highlightBorder}`,
+              borderBottom: `1px solid ${highlightBorder}`,
+              boxShadow: isActive
+                ? "0 0 10px rgba(212,175,55,0.4)"
+                : isCompleted
+                ? "0 0 6px rgba(34,197,94,0.3)"
+                : "none",
+            }}
+            disabled={isFuture}
+          >
+            {index !== STEPS.length - 1 && (
+              <>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    right: "-20px",
+                    width: 0,
+                    height: 0,
+                    borderTop: "50px solid transparent",
+                    borderBottom: "50px solid transparent",
+                    borderLeft: `20px solid ${highlightBorder}`,
+                    zIndex: 1,
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    right: "-19px",
+                    width: 0,
+                    height: 0,
+                    borderTop: "50px solid transparent",
+                    borderBottom: "50px solid transparent",
+                    borderLeft: `20px solid white`,
+                    zIndex: 2,
+                  }}
+                />
+              </>
+            )}
+
             <div
-              key={step.key}
-              className="relative flex-1 transition-transform duration-200"
-              style={{
-                clipPath:
-                  index !== STEPS.length - 1
-                    ? "polygon(0 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 0 100%)"
-                    : "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
+              className="cursor-pointer"
+              onClick={() => {
+                if (!isFuture) {
+                  if (isCompleted || isActive) goView(index);
+                  dispatch(setCurrentStep(index + 1));
+                }
               }}
             >
-              <button
-                disabled={isFuture}
-                onClick={() => {
-                  if (!isFuture) {
-                    if (isCompleted || isActive) goView(index);
-                    dispatch(setCurrentStep(index + 1));
-                  }
+              <div
+                className="flex items-center justify-center"
+                style={{
+                  width: "60px", // fixed width for uniform look
+                  height: "100%", // take full height of the step
+                  backgroundColor: "white",
                 }}
-                className={`flex items-center justify-between h-22 w-full border ${baseColor} transition-all px-4`}
               >
-                <div className="flex flex-col items-start text-left">
-                  <span className="text-sm font-semibold text-black">
-                    {step.label}
-                  </span>
-                  <span className="text-xs">{step.tagline}</span>
-                  <span className="text-sm font-bold text-yellow-700 mt-1">
-                    {isCompleted && step.price}
-                  </span>
+                <div
+                  className="font-bold text-gray-800"
+                  style={{
+                    fontSize: "2.5rem",
+                    lineHeight: 1,
+                  }}
+                >
+                  {index + 1}
                 </div>
+              </div>
+              <div className="text-xs text-gray-500">{step.tagline}</div>
+              <div className="text-sm tracking-wide text-gray-900 font-medium">
+                {step.label.toUpperCase()}
+              </div>
+            </div>
 
-                <div className="flex flex-col items-center">
-                  {index !== 4 && isCompleted && (
-                    <div
-                      className={`w-12 h-12 overflow-hidden rounded-md border shadow-sm ${
-                        isActive ? "border-yellow-500" : "!border-gray-400"
-                      }`}
-                    >
-                      {isCompleted && step.img && (
-                        <img
-                          src={step.img}
-                          alt={step.label}
-                          className="w-full h-full object-cover"
-                        />
-                      )}
+            {step.img && index !== 2 && isCompleted && (
+              <div className="flex items-center gap-3">
+                {/* Price and Actions */}
+                <div className="flex flex-col items-start">
+                  {step.price && (
+                    <div className="text-sm font-medium text-gray-800">
+                      {step.price.toLocaleString()}
                     </div>
                   )}
-
                   <div className="flex gap-2 mt-1 text-xs">
-                    {isCompleted && (
-                      <>
-                        <button
-                          className="text-blue-600 hover:underline"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            goView(index);
-                          }}
-                        >
-                          View
-                        </button>
-                        <button
-                          className="text-red-600 hover:underline"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            doDelete(index);
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </>
-                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        goView(index);
+                      }}
+                      className="text-blue-600 hover:underline"
+                    >
+                      View
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        doDelete(index);
+                      }}
+                      className="text-red-500 hover:underline"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
-              </button>
-            </div>
-          );
-        })}
-      </div>
+
+                {/* Image */}
+                <div className="w-18 h-14 border border-gray-300 rounded overflow-hidden">
+                  <img
+                    src={step.img}
+                    alt={step.label}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
