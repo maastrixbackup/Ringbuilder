@@ -5,7 +5,7 @@ import {
   clearSelectedSetting,
   clearSelectedStone,
   setCurrentStep,
-} from "../redux/ringBuilderSlice";
+} from "../store/ringBuilderSlice";
 
 export default function RingBuilderArrowStepperImages() {
   const dispatch = useDispatch();
@@ -101,7 +101,7 @@ export default function RingBuilderArrowStepperImages() {
             ? "bg-yellow-400 text-black shadow-lg scale-105"
             : isCompleted
             ? "bg-green-400 text-black border-green-600 shadow-lg"
-            : "bg-gray-200 text-gray-500 border-2 border-gray-700";
+            : "bg-gray-100 text-black border-2";
 
           return (
             <div
@@ -135,7 +135,7 @@ export default function RingBuilderArrowStepperImages() {
                 </div>
 
                 <div className="flex flex-col items-center">
-                  {index !== 4 && (
+                  {index !== 4 && isCompleted && (
                     <div
                       className={`w-12 h-12 overflow-hidden rounded-md border shadow-sm ${
                         isActive ? "border-yellow-500" : "!border-gray-400"
