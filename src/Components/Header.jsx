@@ -73,7 +73,7 @@ const Header = () => {
             >
               <Link
                 to={item.link}
-                className={`relative text-sm uppercase tracking-[0.2em] font-medium ${
+                className={`relative text-sm uppercase tracking-[0.2em] font-medium !no-underline ${
                   isHome && !scrolled ? "text-white" : "text-black"
                 } hover:text-yellow-400`}
               >

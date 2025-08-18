@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import { useNavigate } from "react-router-dom";
+import Loader from "../utils/loader";
+import { useEffect, useState } from "react";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -15,6 +17,7 @@ const staggerContainer = {
 
 export default function LuxuryHomePage() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   return (
     <div className="bg-white text-gray-900 font-serif">
@@ -219,6 +222,7 @@ export default function LuxuryHomePage() {
             whileInView={{ opacity: 1, transition: { duration: 0.5 } }}
           />
         </div>
+        {loading && <Loader isLoading={loading} />}
       </section>
       <Footer />
     </div>

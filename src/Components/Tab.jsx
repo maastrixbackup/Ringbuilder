@@ -10,7 +10,7 @@ import {
 export default function RingBuilderArrowStepperImages() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { currentStep, selectedSetting, selectedStone, mode } = useSelector(
+  const { currentStep, selectedSetting, mode } = useSelector(
     (s) => s.ringBuilder
   );
   const STEPS = useMemo(() => {
@@ -38,34 +38,21 @@ export default function RingBuilderArrowStepperImages() {
         price: null,
       },
     ];
-  }, [selectedSetting, selectedStone, mode]);
+  }, [selectedSetting, mode]);
 
-  const goView = (index) => {
-    switch (index) {
-      case 0:
-        navigate("/rings");
-        break;
-      case 1:
-        navigate("/ring-details");
-        break;
-      case 2:
-      case 3:
-        navigate(mode === "gemstone" ? "/gemstones" : "/diamonds");
-        break;
-      default:
-        break;
-    }
+  const goView = (tabIndex, pageIndex = 0) => {
+    const tab = STEPS[tabIndex];
+    if (!tab) return;
+    navigate(tab.pages[pageIndex] || tab.pages[0]);
   };
 
-  const doDelete = (index) => {
-    switch (index) {
-      case 0:
-      case 1:
+  const doDelete = (tabIndex) => {
+    switch (tabIndex) {
+      case 0: // Setting
         dispatch(clearSelectedSetting());
         navigate("/rings");
         break;
-      case 2:
-      case 3:
+      case 1: // Stone
         dispatch(clearSelectedStone());
         navigate(mode === "gemstone" ? "/gemstones" : "/diamonds");
         break;
@@ -89,7 +76,7 @@ export default function RingBuilderArrowStepperImages() {
         return (
           <div
             key={step.key}
-            className="relative  flex-1 h-[100px] flex items-center justify-between px-6 py-4 bg-white"
+            className="relative flex-1 h-[100px] flex items-center justify-between px-6 py-4 bg-white"
             style={{
               borderRight:
                 index !== STEPS.length - 1
@@ -141,7 +128,7 @@ export default function RingBuilderArrowStepperImages() {
               className="cursor-pointer"
               onClick={() => {
                 if (!isFuture) {
-                  if (isCompleted || isActive) goView(index);
+                  if (isCompleted || isActive) goView(index, 0);
                   dispatch(setCurrentStep(index + 1));
                 }
               }}
@@ -149,8 +136,8 @@ export default function RingBuilderArrowStepperImages() {
               <div
                 className="flex items-center justify-center"
                 style={{
-                  width: "60px", // fixed width for uniform look
-                  height: "100%", // take full height of the step
+                  width: "60px",
+                  height: "100%",
                   backgroundColor: "white",
                 }}
               >
@@ -172,7 +159,6 @@ export default function RingBuilderArrowStepperImages() {
 
             {step.img && index !== 2 && isCompleted && (
               <div className="flex items-center gap-3">
-                {/* Price and Actions */}
                 <div className="flex flex-col items-start">
                   {step.price && (
                     <div className="text-sm font-medium text-gray-800">
@@ -183,7 +169,7 @@ export default function RingBuilderArrowStepperImages() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        goView(index);
+                        goView(index, 0);
                       }}
                       className="text-blue-600 hover:underline"
                     >
@@ -201,7 +187,6 @@ export default function RingBuilderArrowStepperImages() {
                   </div>
                 </div>
 
-                {/* Image */}
                 <div className="w-18 h-14 border border-gray-300 rounded overflow-hidden">
                   <img
                     src={step.img}

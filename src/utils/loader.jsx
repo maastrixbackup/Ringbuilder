@@ -1,8 +1,7 @@
 export default function Loader() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-yellow-100 z-50">
+    <div className="fixed inset-0 flex items-center justify-center backdrop-blur-[2px] z-50">
       <div className="relative w-24 h-24 animate-spin-slow">
-
         <div
           className="absolute inset-0 rounded-full border-[8px] border-transparent
             bg-gradient-to-r from-yellow-500 via-yellow-00 to-yellow-600

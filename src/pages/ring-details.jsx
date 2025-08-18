@@ -10,10 +10,12 @@ import {
 } from "../store/ringBuilderSlice";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "../Components/Header";
+import Loader from "../utils/loader";
 
 const RingDetailsPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
   const { selectedSetting, ui } = useSelector((s) => s.ringBuilder);
   const [activeTab, setActiveTab] = useState("description");
 
@@ -23,19 +25,22 @@ const RingDetailsPage = () => {
     { id: "care", label: "Care & Maintenance" },
   ];
   useEffect(() => {
+    window.scrollTo(0, 0);
+    setLoading(true);
     if (!selectedSetting) {
       navigate("/rings");
       return;
+    } else {
+      setLoading(false);
     }
-    dispatch(setCurrentStep(2));
-  }, [selectedSetting]);
+  }, [navigate, selectedSetting]);
 
   if (!selectedSetting) return null;
 
   const goMode = (mode) => {
     dispatch(setMode(mode));
     dispatch(closeChoiceModal());
-    dispatch(setCurrentStep(3));
+    dispatch(setCurrentStep(2));
     navigate(mode === "gemstone" ? "/gemstones" : "/diamonds");
   };
 
@@ -76,7 +81,6 @@ const RingDetailsPage = () => {
             </div>
           </div>
 
-          {/* Right - Info */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -258,6 +262,7 @@ const RingDetailsPage = () => {
             </motion.div>
           )}
         </AnimatePresence>
+        {loading && <Loader isLoading={loading} />}
       </section>
     </>
   );

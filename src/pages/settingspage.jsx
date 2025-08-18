@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setSelectedSetting } from "../store/ringBuilderSlice";
+import { setSelectedSetting, setCurrentStep } from "../store/ringBuilderSlice";
 import { baseUrl } from "../utils/utils";
 import Loader from "../utils/loader";
 import Tab from "../Components/Tab";
@@ -71,15 +71,11 @@ const Setting = () => {
 
   const updateFilter = (key, value) => {
     setFilters((prev) => {
-      // if (key === "ring-type") {
       if (prev[key] === value) {
         const { [key]: _, ...rest } = prev;
         return rest;
       }
       return { ...prev, [key]: value };
-      // }
-
-      // return { ...prev, [key]: value };
     });
   };
 
@@ -98,6 +94,7 @@ const Setting = () => {
               </p>
             </div>
 
+            {/* Style Filter */}
             <div className="col-md-12">
               <div className="ring-style-list d-flex flex-wrap gap-2">
                 {filterOptions.style?.map((style) => (
@@ -122,6 +119,7 @@ const Setting = () => {
             </div>
           </div>
 
+          {/* Filters */}
           <div className="col-md-12 mt-3">
             <div className="filter-row d-flex flex-wrap align-items-center ">
               <select
@@ -137,7 +135,6 @@ const Setting = () => {
                 ))}
               </select>
 
-              {/* Metal Colors */}
               <select
                 className="filter-dropdown"
                 value={filters.ring_color || ""}
@@ -151,7 +148,6 @@ const Setting = () => {
                 ))}
               </select>
 
-              {/* Width */}
               <select
                 className="filter-dropdown"
                 value={filters.ring_width || ""}
@@ -165,7 +161,6 @@ const Setting = () => {
                 ))}
               </select>
 
-              {/* Shapes */}
               <select
                 className="filter-dropdown"
                 value={filters.diamond_shape || ""}
@@ -179,7 +174,6 @@ const Setting = () => {
                 ))}
               </select>
 
-              {/* Karat */}
               <select
                 className="filter-dropdown"
                 value={filters.ring_karat || ""}
@@ -195,6 +189,7 @@ const Setting = () => {
             </div>
           </div>
 
+          {/* Rings List */}
           <div className="row mt-4">
             {allRings.length === 0 ? (
               <div className="col-12">
@@ -208,11 +203,11 @@ const Setting = () => {
                     onClick={() => {
                       const newSetting = {
                         label: ring.title,
-                        price: `$${ring.ring_price}`,
+                        price: ring.ring_price, // keep as number for consistency
                         image: ring.normal_image,
                       };
                       dispatch(setSelectedSetting(newSetting));
-                      // localStorage.removeItem("selectedDiamond");
+                      dispatch(setCurrentStep(1)); 
                       navigate("/ring-details");
                     }}
                   >

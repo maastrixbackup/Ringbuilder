@@ -44,12 +44,10 @@ const slice = createSlice({
     setSelectedSetting(state, action) {
       state.selectedSetting = action.payload;
       persist("selectedSetting", state.selectedSetting);
-
       state.selectedStone = null;
       persist("selectedStone", null);
       state.mode = null;
       persist("rb_mode", null);
-      state.currentStep = 2;
     },
     clearSelectedSetting(state) {
       state.selectedSetting = null;
