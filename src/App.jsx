@@ -11,6 +11,7 @@ const SettingsPage = lazy(() => import("./pages/settingspage"));
 const DiamondsPage = lazy(() => import("./pages/diamondpage"));
 const CompleteRingPage = lazy(() => import("./pages/completeringpage"));
 const RingDetails = lazy(() => import("./pages/ring-details"));
+const DiamondDetails = lazy(() => import("./pages/diamond-details"));
 import "../style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -20,13 +21,14 @@ import Home from "./pages/Home";
 export default function App() {
   return (
     <Provider store={store}>
-      <Router>
+      <Router basename="/ring_builder">
         <Suspense fallback={<Loader />}>
           <Routes>
             <Route path="/rings" element={<SettingsPage />} />
             <Route path="/diamonds" element={<DiamondsPage />} />
             <Route path="/complete-ring" element={<CompleteRingPage />} />
             <Route path="/ring-details" element={<RingDetails />} />
+            <Route path="/diamond-details" element={<DiamondDetails />} />
             <Route path="/" element={<Home />} />
           </Routes>
         </Suspense>

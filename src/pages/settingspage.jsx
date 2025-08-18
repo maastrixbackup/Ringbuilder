@@ -203,7 +203,7 @@ const Setting = () => {
                     onClick={() => {
                       const newSetting = {
                         label: ring.title,
-                        price: ring.ring_price, // keep as number for consistency
+                        price: ring.ring_price, 
                         image: ring.normal_image,
                       };
                       dispatch(setSelectedSetting(newSetting));
