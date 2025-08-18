@@ -49,10 +49,7 @@ const RingDetailsPage = () => {
       <Header />
       <section className="mt-4 container font-[Poppins]">
         <Tab />
-
-        {/* Main Product Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-10">
-          {/* Left - Images */}
           <div>
             <motion.img
               key={selectedSetting.image}
@@ -95,8 +92,6 @@ const RingDetailsPage = () => {
                 {selectedSetting.price}
               </span>
             </p>
-
-            {/* Metal Types */}
             <div className="mb-6">
               <h3 className="text-xs font-medium text-gray-700 mb-2 tracking-wide uppercase">
                 Metal Type
@@ -116,8 +111,6 @@ const RingDetailsPage = () => {
                 )}
               </div>
             </div>
-
-            {/* Ring Size */}
             <div className="mb-6">
               <h3 className="text-xs font-medium text-gray-700 mb-2 tracking-wide uppercase">
                 Ring Size
@@ -147,9 +140,7 @@ const RingDetailsPage = () => {
           </motion.div>
         </div>
 
-        {/* Description Section */}
         <div className="mt-10 ">
-          {/* Tab Header */}
           <div className="flex gap-6  pb-2">
             {tabs.map((tab) => (
               <button
@@ -166,7 +157,6 @@ const RingDetailsPage = () => {
             ))}
           </div>
 
-          {/* Tab Content */}
           <div className="mt-6 text-sm text-gray-600 leading-relaxed mb-50">
             {activeTab === "description" && (
               <div>
@@ -222,7 +212,6 @@ const RingDetailsPage = () => {
             )}
           </div>
         </div>
-        {/* Choice Modal */}
         <AnimatePresence>
           {ui.choiceModalOpen && (
             <motion.div

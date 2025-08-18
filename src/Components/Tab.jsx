@@ -10,7 +10,7 @@ import {
 export default function RingBuilderArrowStepperImages() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { currentStep, selectedSetting, mode } = useSelector(
+  const { currentStep, selectedSetting,selectedStone, mode } = useSelector(
     (s) => s.ringBuilder
   );
   const STEPS = useMemo(() => {
@@ -27,8 +27,8 @@ export default function RingBuilderArrowStepperImages() {
         key: "diamond",
         label: `${stoneLabel}`,
         tagline: `Choose a`,
-        img: selectedSetting?.image,
-        price: selectedSetting?.price,
+        img: selectedStone?.image,
+        price: selectedStone?.price,
       },
       {
         key: "complete",
