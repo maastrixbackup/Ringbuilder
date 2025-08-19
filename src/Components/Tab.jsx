@@ -10,9 +10,8 @@ import {
 export default function RingBuilderArrowStepperImages() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { currentStep, selectedSetting, selectedStone, mode } = useSelector(
-    (s) => s.ringBuilder
-  );
+  const { currentStep, selectedSetting, selectedStone, mode, filters } =
+    useSelector((s) => s.ringBuilder);
 
   const STEPS = useMemo(() => {
     const stoneLabel = mode === "gemstone" ? "Gemstone" : "Diamond";
@@ -39,19 +38,27 @@ export default function RingBuilderArrowStepperImages() {
         price: null,
       },
     ];
-  }, [selectedSetting, mode]);
+  }, [selectedSetting, mode, selectedStone]);
 
-  const goView = (tabIndex, pageIndex = 0) => {
-    const tab = STEPS[tabIndex];
-    if (!tab) return;
-    navigate(tab.pages?.[pageIndex] || tab.pages?.[0] || "/");
+  const goView = (tabIndex) => {
+    switch (tabIndex) {
+      case 0:
+        navigate("/ring-details");
+        break;
+      case 1:
+        navigate("/diamond-details");
+        break;
+      default:
+        break;
+    }
   };
 
   const doDelete = (tabIndex) => {
     switch (tabIndex) {
       case 0:
         dispatch(clearSelectedSetting());
-        navigate("/rings");
+        const query = new URLSearchParams(filters || {}).toString();
+        navigate(`/rings${query ? `?${query}` : ""}`);
         break;
       case 1:
         dispatch(clearSelectedStone());
@@ -95,7 +102,6 @@ export default function RingBuilderArrowStepperImages() {
             }}
             disabled={isFuture}
           >
-            {/* Arrow */}
             {index !== STEPS.length - 1 && (
               <>
                 <div
@@ -127,12 +133,11 @@ export default function RingBuilderArrowStepperImages() {
               </>
             )}
 
-            {/* Step Number & Label */}
             <div
               className="cursor-pointer ml-2"
               onClick={() => {
                 if (!isFuture) {
-                  if (isCompleted || isActive) goView(index, 0);
+                  if (isCompleted || isActive) goView(index);
                   dispatch(setCurrentStep(index + 1));
                 }
               }}
@@ -161,7 +166,6 @@ export default function RingBuilderArrowStepperImages() {
               </div>
             </div>
 
-            {/* Image + Actions */}
             {step.img && index !== 2 && isCompleted && (
               <div className="flex items-center gap-2">
                 <div className="flex flex-col items-start">
@@ -174,7 +178,7 @@ export default function RingBuilderArrowStepperImages() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        goView(index, 0);
+                        goView(index);
                       }}
                       className="text-blue-600 hover:underline"
                     >
