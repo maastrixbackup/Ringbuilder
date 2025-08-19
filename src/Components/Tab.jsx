@@ -10,9 +10,10 @@ import {
 export default function RingBuilderArrowStepperImages() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { currentStep, selectedSetting,selectedStone, mode } = useSelector(
+  const { currentStep, selectedSetting, selectedStone, mode } = useSelector(
     (s) => s.ringBuilder
   );
+
   const STEPS = useMemo(() => {
     const stoneLabel = mode === "gemstone" ? "Gemstone" : "Diamond";
     return [
@@ -43,16 +44,16 @@ export default function RingBuilderArrowStepperImages() {
   const goView = (tabIndex, pageIndex = 0) => {
     const tab = STEPS[tabIndex];
     if (!tab) return;
-    navigate(tab.pages[pageIndex] || tab.pages[0]);
+    navigate(tab.pages?.[pageIndex] || tab.pages?.[0] || "/");
   };
 
   const doDelete = (tabIndex) => {
     switch (tabIndex) {
-      case 0: // Setting
+      case 0:
         dispatch(clearSelectedSetting());
         navigate("/rings");
         break;
-      case 1: // Stone
+      case 1:
         dispatch(clearSelectedStone());
         navigate(mode === "gemstone" ? "/gemstones" : "/diamonds");
         break;
@@ -60,6 +61,7 @@ export default function RingBuilderArrowStepperImages() {
         break;
     }
   };
+
   return (
     <div className="flex max-w-6xl mx-auto mt-24 rounded overflow-hidden border border-gray-300">
       {STEPS.map((step, index) => {
@@ -76,7 +78,7 @@ export default function RingBuilderArrowStepperImages() {
         return (
           <div
             key={step.key}
-            className="relative flex-1 h-[100px] flex items-center justify-between px-6 py-4 bg-white"
+            className="relative flex-1 h-[80px] flex items-center justify-between px-5 py-3 bg-white"
             style={{
               borderRight:
                 index !== STEPS.length - 1
@@ -93,18 +95,19 @@ export default function RingBuilderArrowStepperImages() {
             }}
             disabled={isFuture}
           >
+            {/* Arrow */}
             {index !== STEPS.length - 1 && (
               <>
                 <div
                   style={{
                     position: "absolute",
                     top: 0,
-                    right: "-20px",
+                    right: "-16px",
                     width: 0,
                     height: 0,
-                    borderTop: "50px solid transparent",
-                    borderBottom: "50px solid transparent",
-                    borderLeft: `20px solid ${highlightBorder}`,
+                    borderTop: "40px solid transparent",
+                    borderBottom: "40px solid transparent",
+                    borderLeft: `16px solid ${highlightBorder}`,
                     zIndex: 1,
                   }}
                 />
@@ -112,20 +115,21 @@ export default function RingBuilderArrowStepperImages() {
                   style={{
                     position: "absolute",
                     top: 0,
-                    right: "-19px",
+                    right: "-15px",
                     width: 0,
                     height: 0,
-                    borderTop: "50px solid transparent",
-                    borderBottom: "50px solid transparent",
-                    borderLeft: `20px solid white`,
+                    borderTop: "40px solid transparent",
+                    borderBottom: "40px solid transparent",
+                    borderLeft: `16px solid white`,
                     zIndex: 2,
                   }}
                 />
               </>
             )}
 
+            {/* Step Number & Label */}
             <div
-              className="cursor-pointer"
+              className="cursor-pointer ml-2"
               onClick={() => {
                 if (!isFuture) {
                   if (isCompleted || isActive) goView(index, 0);
@@ -136,7 +140,7 @@ export default function RingBuilderArrowStepperImages() {
               <div
                 className="flex items-center justify-center"
                 style={{
-                  width: "60px",
+                  width: "50px",
                   height: "100%",
                   backgroundColor: "white",
                 }}
@@ -144,21 +148,22 @@ export default function RingBuilderArrowStepperImages() {
                 <div
                   className="font-bold text-gray-800"
                   style={{
-                    fontSize: "2.5rem",
+                    fontSize: "2rem",
                     lineHeight: 1,
                   }}
                 >
                   {index + 1}
                 </div>
               </div>
-              <div className="text-xs text-gray-500">{step.tagline}</div>
+              <div className="text-[11px] text-gray-500">{step.tagline}</div>
               <div className="text-sm tracking-wide text-gray-900 font-medium">
                 {step.label.toUpperCase()}
               </div>
             </div>
 
+            {/* Image + Actions */}
             {step.img && index !== 2 && isCompleted && (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <div className="flex flex-col items-start">
                   {step.price && (
                     <div className="text-sm font-medium text-gray-800">
@@ -187,7 +192,7 @@ export default function RingBuilderArrowStepperImages() {
                   </div>
                 </div>
 
-                <div className="w-18 h-14 border border-gray-300 rounded overflow-hidden">
+                <div className="w-16 h-12 border border-gray-300 rounded overflow-hidden">
                   <img
                     src={step.img}
                     alt={step.label}
