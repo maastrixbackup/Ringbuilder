@@ -21,7 +21,7 @@ import Home from "./pages/Home";
 export default function App() {
   return (
     <Provider store={store}>
-      <Router basename="/ring_builder">
+      <Router>
         <Suspense fallback={<Loader />}>
           <Routes>
             <Route path="/rings" element={<SettingsPage />} />
