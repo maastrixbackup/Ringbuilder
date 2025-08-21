@@ -55,7 +55,7 @@ const Header = () => {
             </svg>
           </div>
           <span
-            className={`text-2xl font-serif tracking-widest ${
+            className={`text-2xl font-sans tracking-widest ${
               isHome && !scrolled ? "text-yellow-500" : "text-yellow-600"
             }`}
           >

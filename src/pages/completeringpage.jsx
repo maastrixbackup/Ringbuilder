@@ -5,13 +5,12 @@ import DiamondViewer from "./diamondViewer";
 import Tab from "../Components/Tab";
 import Header from "../Components/Header";
 import { setCurrentStep } from "../store/ringBuilderSlice";
-import Loader from "../utils/loader";
+import RingViewer from "./RingViewer";
 
 export default function CompleteRingPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { selectedSetting, selectedStone } = useSelector((s) => s.ringBuilder);
-  const [loading, setLoading] = useState(true);
 
   const themes = [
     { label: "Original", raw: true },
@@ -49,89 +48,83 @@ export default function CompleteRingPage() {
 
   useEffect(() => {
     dispatch(setCurrentStep(3));
-    setLoading(false);
   }, [dispatch]);
 
   return (
     <>
       <Header />
       <div className="container mt-4">
-        <div className={`container ${loading ? "blurred" : ""}`}>
-          <Tab />
+        <Tab />
 
-          <div className="back-to-gallery mt-4 mb-4">
-            <span
-              onClick={() => navigate("/diamonds")}
-              style={{
-                fontSize: "12px",
-                fontWeight: "600",
-                textDecoration: "underline",
-                cursor: "pointer",
-                color: "#000",
-                textTransform: "uppercase",
-              }}
-            >
-              &lt; BACK TO DIAMOND SECTION
-            </span>
-          </div>
-
-          <h3 className="mb-4">Your Completed Ring</h3>
-
-          {!selectedSetting || !selectedStone ? (
-            <p>Please go back and select both a setting and a diamond.</p>
-          ) : (
-            <>
-              <div className="mb-3">
-                <strong>Choose Ring Theme:</strong>
-                <div className="d-flex gap-2 mt-2">
-                  {themes.map((t) => (
-                    <button
-                      key={t.label}
-                      onClick={() => setTheme(t)}
-                      style={{
-                        backgroundColor: t.color,
-                        border: "1px solid #ccc",
-                        width: "40px",
-                        height: "40px",
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                        outline:
-                          theme.label === t.label ? "3px solid black" : "none",
-                      }}
-                      title={t.label}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="col-md-4">
-                  <DiamondViewer
-                    theme={theme}
-                    modelPath={"models/gltf/ring.gltf"}
-                  />
-                </div>
-
-                <div className="col-md-4">
-                  <img src={selectedSetting.image} width="100%" alt="Ring" />
-                </div>
-
-                <div className="col-md-4">
-                  <p>
-                    <strong>Setting:</strong> {selectedSetting.label}
-                  </p>
-                  <p>
-                    <strong>Diamond:</strong> {selectedStone.label}
-                  </p>
-                  <p>
-                    <strong>Price:</strong> ${selectedStone.price}
-                  </p>
-                </div>
-              </div>
-            </>
-          )}
-          {loading && <Loader isLoading={loading} />}
+        <div className="back-to-gallery mt-4 mb-4">
+          <span
+            onClick={() => navigate("/diamonds")}
+            style={{
+              fontSize: "12px",
+              fontWeight: "600",
+              textDecoration: "underline",
+              cursor: "pointer",
+              color: "#000",
+              textTransform: "uppercase",
+            }}
+          >
+            &lt; BACK TO DIAMOND SECTION
+          </span>
         </div>
+
+        <h3 className="mb-4">Your Completed Ring</h3>
+
+        {!selectedSetting || !selectedStone ? (
+          <p>Please go back and select both a setting and a diamond.</p>
+        ) : (
+          <>
+            <div className="mb-3">
+              <strong>Choose Ring Theme:</strong>
+              <div className="d-flex gap-2 mt-2">
+                {themes.map((t) => (
+                  <button
+                    key={t.label}
+                    onClick={() => setTheme(t)}
+                    style={{
+                      backgroundColor: t.color,
+                      border: "1px solid #ccc",
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                      outline:
+                        theme.label === t.label ? "3px solid black" : "none",
+                    }}
+                    title={t.label}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-md-4">
+                {/* <DiamondViewer theme={theme} modelPath={"models/3.glb"} /> */}
+                <RingViewer />
+              </div>
+
+              <div className="col-md-4">
+                <img src={selectedSetting.image} width="100%" alt="Ring" />
+              </div>
+
+              <div className="col-md-4">
+                <p>
+                  <strong>Setting:</strong> {selectedSetting.label}
+                </p>
+                <p>
+                  <strong>Diamond:</strong> {selectedStone.label}
+                </p>
+                <p>
+                  <strong>Price:</strong> ${selectedStone.price}
+                </p>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </>
   );
