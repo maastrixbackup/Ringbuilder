@@ -70,7 +70,7 @@ export default function RingBuilderArrowStepperImages() {
   };
 
   return (
-    <div className="flex max-w-6xl mx-auto mt-24 rounded overflow-hidden border border-gray-300">
+    <div className="flex mx-auto mt-24 rounded overflow-hidden border border-gray-300">
       {STEPS.map((step, index) => {
         const isCompleted = index < currentStep - 1;
         const isActive = index === currentStep - 1;
