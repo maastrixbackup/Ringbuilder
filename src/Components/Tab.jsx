@@ -40,12 +40,17 @@ export default function RingBuilderArrowStepperImages() {
     ];
   }, [selectedSetting, mode, selectedStone]);
 
+  // --- View button logic ---
   const goView = (tabIndex) => {
     switch (tabIndex) {
-      case 0:
-        navigate("/ring-details");
+      case 0: // Setting -> Ring Details (1b)
+        if (selectedSetting?.id) {
+          navigate(`/ring-details?id=${selectedSetting.id}`);
+        } else {
+          navigate("/rings");
+        }
         break;
-      case 1:
+      case 1: // Diamond -> Diamond Details
         navigate("/diamond-details");
         break;
       default:
@@ -102,6 +107,7 @@ export default function RingBuilderArrowStepperImages() {
             }}
             disabled={isFuture}
           >
+            {/* Arrow */}
             {index !== STEPS.length - 1 && (
               <>
                 <div
@@ -133,11 +139,18 @@ export default function RingBuilderArrowStepperImages() {
               </>
             )}
 
+            {/* Step label click (tab itself) */}
             <div
               className="cursor-pointer ml-2"
               onClick={() => {
                 if (!isFuture) {
-                  if (isCompleted || isActive) goView(index);
+                  if (index === 0) {
+                    // Settings tab -> always Rings listing (1a)
+                    const query = new URLSearchParams(filters || {}).toString();
+                    navigate(`/rings${query ? `?${query}` : ""}`);
+                  } else if (isCompleted || isActive) {
+                    goView(index);
+                  }
                   dispatch(setCurrentStep(index + 1));
                 }
               }}
@@ -166,7 +179,8 @@ export default function RingBuilderArrowStepperImages() {
               </div>
             </div>
 
-            {step.img && index !== 2 && isCompleted && (
+            {/* Image + Actions */}
+            {step.img && index !== 2 && (isCompleted || isActive) && (
               <div className="flex items-center gap-2">
                 <div className="flex flex-col items-start">
                   {step.price && (
@@ -175,6 +189,7 @@ export default function RingBuilderArrowStepperImages() {
                     </div>
                   )}
                   <div className="flex gap-2 mt-1 text-xs">
+                    {/* View button -> 1b Ring Details */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
