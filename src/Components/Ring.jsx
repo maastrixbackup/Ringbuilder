@@ -17,10 +17,10 @@ export default function Ring({ metalTexture, scale = 1 }) {
         if (child.name === "Body_1") {
           const material = new THREE.MeshPhysicalMaterial({
             metalness: 1,
-            roughness: 0.2,
-            clearcoat: 1,
-            clearcoatRoughness: 0.05,
-            envMapIntensity: 2,
+            roughness: 0.35, // little more roughness = richer reflection
+            clearcoat: 0.8,
+            clearcoatRoughness: 0.15,
+            envMapIntensity: 1.5, // lower if too bright
           });
 
           if (metalTexture?.isTexture) {
@@ -33,7 +33,6 @@ export default function Ring({ metalTexture, scale = 1 }) {
 
           child.material = material;
         }
-        // ❌ Do nothing for diamond meshes
       }
     });
   }, [scene, metalTexture]);

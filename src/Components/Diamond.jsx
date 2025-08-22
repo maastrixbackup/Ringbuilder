@@ -1,9 +1,10 @@
-import { forwardRef, useEffect } from "react";
+import { forwardRef } from "react";
 import { useGLTF } from "@react-three/drei";
 
 const Diamond = forwardRef(
   ({ cubeMap, scale = 1, position = [0, 0, 0] }, ref) => {
     const { nodes } = useGLTF("/models/stone_RND_decoded.glb");
+
     return (
       <mesh
         ref={ref}
@@ -13,14 +14,15 @@ const Diamond = forwardRef(
       >
         <meshPhysicalMaterial
           envMap={cubeMap}
-          envMapIntensity={2}
-          transmission={1}
+          envMapIntensity={2} // much lower reflections
+          transmission={1} 
           roughness={0}
           metalness={0}
           clearcoat={1}
           clearcoatRoughness={0}
-          ior={2.4}
-          thickness={0.5}
+          ior={2.42} // realistic diamond index
+          thickness={0.5} // increase thickness → more depth
+          // attenuationColor="#F2F2F2"
         />
       </mesh>
     );

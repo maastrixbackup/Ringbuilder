@@ -28,17 +28,24 @@ export default function RingViewer({ metalTexture }) {
       <Canvas
         camera={{ position: [0, 2, 5], fov: 50 }}
         shadows
-        gl={{ antialias: true }}
+        gl={{
+          antialias: true,
+          toneMapping: THREE.ACESFilmicToneMapping,
+          outputEncoding: THREE.sRGBEncoding,
+        }}
+        onCreated={({ gl }) => {
+          gl.toneMappingExposure = 0.5; // darker overall
+        }}
       >
-        <ambientLight intensity={0.4} />
+        <ambientLight intensity={0.15} />
         <spotLight
-          position={[5, 10, 5]}
+          position={[5, 8, 5]}
           angle={0.3}
           penumbra={1}
-          intensity={2}
+          intensity={1}
           castShadow
         />
-        <pointLight position={[-5, 5, -5]} intensity={1.5} />
+        <pointLight position={[-5, 5, -5]} intensity={0.8} />
 
         <Suspense fallback={null}>
           <group scale={1.5}>
@@ -51,7 +58,7 @@ export default function RingViewer({ metalTexture }) {
             />
           </group>
           <Environment
-            intensity={1}
+            intensity={0.5}
             background={false}
             files="/hdr/studio_small_03_1k.hdr"
           />
