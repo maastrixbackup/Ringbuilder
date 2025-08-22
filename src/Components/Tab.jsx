@@ -70,7 +70,7 @@ export default function RingBuilderArrowStepperImages() {
   };
 
   return (
-    <div className="flex max-w-6xl mx-auto mt-24 rounded overflow-hidden border border-gray-300">
+    <div className="flex flex-wrap md:flex-nowrap mx-auto mt-22 rounded overflow-hidden border border-gray-300">
       {STEPS.map((step, index) => {
         const isCompleted = index < currentStep - 1;
         const isActive = index === currentStep - 1;
@@ -85,10 +85,10 @@ export default function RingBuilderArrowStepperImages() {
         return (
           <div
             key={step.key}
-            className="relative flex-1 h-[80px] flex items-center justify-between px-5 py-3 bg-white"
+            className="relative flex-1 min-w-[160px] md:min-w-0 h-[70px] md:h-[80px] flex items-center justify-between px-3 md:px-5 py-2 md:py-3 bg-white"
             style={{
               borderRight:
-                index !== STEPS.length - 1
+                index !== STEPS.length - 1 && window.innerWidth >= 768
                   ? "none"
                   : `1px solid ${highlightBorder}`,
               borderTop: `1px solid ${highlightBorder}`,
@@ -102,8 +102,9 @@ export default function RingBuilderArrowStepperImages() {
             }}
             disabled={isFuture}
           >
+            {/* Arrow (desktop only) */}
             {index !== STEPS.length - 1 && (
-              <>
+              <div className="hidden md:block">
                 <div
                   style={{
                     position: "absolute",
@@ -130,51 +131,56 @@ export default function RingBuilderArrowStepperImages() {
                     zIndex: 2,
                   }}
                 />
-              </>
+              </div>
             )}
 
             <div
-              className="cursor-pointer ml-2"
+              className="cursor-pointer ml-1 md:ml-2 flex-1"
               onClick={() => {
                 if (!isFuture) {
-                  if (isCompleted || isActive) goView(index);
+                  if (index === 0) {
+                    const query = new URLSearchParams(filters || {}).toString();
+                    navigate(`/rings${query ? `?${query}` : ""}`);
+                  } else if (isCompleted || isActive) {
+                    goView(index);
+                  }
                   dispatch(setCurrentStep(index + 1));
                 }
               }}
             >
-              <div
-                className="flex items-center justify-center"
-                style={{
-                  width: "50px",
-                  height: "100%",
-                  backgroundColor: "white",
-                }}
-              >
+              <div className="flex items-center">
                 <div
-                  className="font-bold text-gray-800"
+                  className="font-bold text-gray-800 flex items-center justify-center"
                   style={{
-                    fontSize: "2rem",
+                    fontSize: "1.5rem",
                     lineHeight: 1,
+                    width: "40px",
+                    height: "40px",
                   }}
                 >
                   {index + 1}
                 </div>
-              </div>
-              <div className="text-[11px] text-gray-500">{step.tagline}</div>
-              <div className="text-sm tracking-wide text-gray-900 font-medium">
-                {step.label.toUpperCase()}
+                <div className="ml-2">
+                  <div className="text-[10px] md:text-[11px] text-gray-500">
+                    {step.tagline}
+                  </div>
+                  <div className="text-xs md:text-sm tracking-wide text-gray-900 font-medium">
+                    {step.label.toUpperCase()}
+                  </div>
+                </div>
               </div>
             </div>
 
-            {step.img && index !== 2 && isCompleted && (
-              <div className="flex items-center gap-2">
+            {/* Image + Actions */}
+            {step.img && index !== 2 && (isCompleted || isActive) && (
+              <div className="flex items-center gap-2 ml-2">
                 <div className="flex flex-col items-start">
                   {step.price && (
-                    <div className="text-sm font-medium text-gray-800">
+                    <div className="text-xs md:text-sm font-medium text-gray-800">
                       {step.price.toLocaleString()}
                     </div>
                   )}
-                  <div className="flex gap-2 mt-1 text-xs">
+                  <div className="flex gap-2 mt-1 text-[10px] md:text-xs">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -196,7 +202,7 @@ export default function RingBuilderArrowStepperImages() {
                   </div>
                 </div>
 
-                <div className="w-16 h-12 border border-gray-300 rounded overflow-hidden">
+                <div className="w-12 h-10 md:w-16 md:h-12 border border-gray-300 rounded overflow-hidden">
                   <img
                     src={step.img}
                     alt={step.label}
