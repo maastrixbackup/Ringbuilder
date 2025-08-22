@@ -40,12 +40,17 @@ export default function RingBuilderArrowStepperImages() {
     ];
   }, [selectedSetting, mode, selectedStone]);
 
+  // --- View button logic ---
   const goView = (tabIndex) => {
     switch (tabIndex) {
-      case 0:
-        navigate("/ring-details");
+      case 0: // Setting -> Ring Details (1b)
+        if (selectedSetting?.id) {
+          navigate(`/ring-details?id=${selectedSetting.id}`);
+        } else {
+          navigate("/rings");
+        }
         break;
-      case 1:
+      case 1: // Diamond -> Diamond Details
         navigate("/diamond-details");
         break;
       default:
@@ -134,6 +139,7 @@ export default function RingBuilderArrowStepperImages() {
               </div>
             )}
 
+            {/* Step label click (tab itself) */}
             <div
               className="cursor-pointer ml-1 md:ml-2 flex-1"
               onClick={() => {

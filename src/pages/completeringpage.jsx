@@ -5,6 +5,7 @@ import DiamondViewer from "./diamondViewer";
 import Tab from "../Components/Tab";
 import Header from "../Components/Header";
 import { setCurrentStep } from "../store/ringBuilderSlice";
+import RingViewer from "./RingViewer";
 
 export default function CompleteRingPage() {
   const dispatch = useDispatch();
@@ -102,10 +103,8 @@ export default function CompleteRingPage() {
 
             <div className="row">
               <div className="col-md-4">
-                <DiamondViewer
-                  theme={theme}
-                  modelPath={"models/gltf/ring.gltf"}
-                />
+                {/* <DiamondViewer theme={theme} modelPath={"models/3.glb"} /> */}
+                <RingViewer />
               </div>
 
               <div className="col-md-4">

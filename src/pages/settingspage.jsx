@@ -204,13 +204,14 @@ const Setting = () => {
                     className="ring-product-box premium-card"
                     onClick={() => {
                       const newSetting = {
+                        id: ring.id,
                         label: ring.title,
                         price: ring.ring_price,
                         image: ring.normal_image,
                       };
                       dispatch(setSelectedSetting(newSetting));
                       dispatch(setCurrentStep(1));
-                      navigate("/ring-details");
+                      navigate(`/ring-details?id=${ring.id}`);
                     }}
                   >
                     <div className="ring-image-box">
