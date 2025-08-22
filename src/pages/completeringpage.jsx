@@ -6,6 +6,8 @@ import Tab from "../Components/Tab";
 import Header from "../Components/Header";
 import { setCurrentStep } from "../store/ringBuilderSlice";
 import RingViewer from "./RingViewer";
+import MetalSwitcher from "../Components/MetalSwitcher";
+import * as THREE from "three";
 
 export default function CompleteRingPage() {
   const dispatch = useDispatch();
@@ -44,7 +46,9 @@ export default function CompleteRingPage() {
     },
   ];
 
-  const [theme, setTheme] = useState(themes[0]);
+  const [metalTexture, setMetalTexture] = useState(
+    new THREE.TextureLoader().load("/textures/metal/white.png")
+  );
 
   useEffect(() => {
     dispatch(setCurrentStep(3));
@@ -55,56 +59,21 @@ export default function CompleteRingPage() {
       <Header />
       <div className="container mt-4">
         <Tab />
-
-        <div className="back-to-gallery mt-4 mb-4">
-          <span
-            onClick={() => navigate("/diamonds")}
-            style={{
-              fontSize: "12px",
-              fontWeight: "600",
-              textDecoration: "underline",
-              cursor: "pointer",
-              color: "#000",
-              textTransform: "uppercase",
-            }}
-          >
-            &lt; BACK TO DIAMOND SECTION
-          </span>
-        </div>
-
-        <h3 className="mb-4">Your Completed Ring</h3>
-
         {!selectedSetting || !selectedStone ? (
           <p>Please go back and select both a setting and a diamond.</p>
         ) : (
           <>
-            <div className="mb-3">
+            <div className="mt-3">
               <strong>Choose Ring Theme:</strong>
               <div className="d-flex gap-2 mt-2">
-                {themes.map((t) => (
-                  <button
-                    key={t.label}
-                    onClick={() => setTheme(t)}
-                    style={{
-                      backgroundColor: t.color,
-                      border: "1px solid #ccc",
-                      width: "40px",
-                      height: "40px",
-                      borderRadius: "50%",
-                      cursor: "pointer",
-                      outline:
-                        theme.label === t.label ? "3px solid black" : "none",
-                    }}
-                    title={t.label}
-                  />
-                ))}
+                <MetalSwitcher setMetalTexture={setMetalTexture} />
               </div>
             </div>
 
             <div className="row">
               <div className="col-md-4">
                 {/* <DiamondViewer theme={theme} modelPath={"models/3.glb"} /> */}
-                <RingViewer />
+                <RingViewer metalTexture={metalTexture} />
               </div>
 
               <div className="col-md-4">

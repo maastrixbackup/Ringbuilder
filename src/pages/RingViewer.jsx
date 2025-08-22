@@ -8,11 +8,8 @@ import HeadDecoration from "../Components/HeadDecoration";
 import MetalSwitcher from "../Components/MetalSwitcher";
 import * as THREE from "three";
 
-export default function RingViewer() {
+export default function RingViewer({ metalTexture }) {
   const diamondRef = useRef();
-  const [metalTexture, setMetalTexture] = useState(
-    new THREE.TextureLoader().load("/textures/metal/white.png")
-  );
 
   const cubeMap = new THREE.CubeTextureLoader()
     .setPath("/textures/stone_env/")
@@ -28,7 +25,6 @@ export default function RingViewer() {
         marginTop: "10%",
       }}
     >
-      <MetalSwitcher setMetalTexture={setMetalTexture} />
       <Canvas
         camera={{ position: [0, 2, 5], fov: 50 }}
         shadows

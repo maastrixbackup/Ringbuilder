@@ -1,10 +1,9 @@
-import { forwardRef } from "react";
+import { forwardRef, useEffect } from "react";
 import { useGLTF } from "@react-three/drei";
 
 const Diamond = forwardRef(
   ({ cubeMap, scale = 1, position = [0, 0, 0] }, ref) => {
     const { nodes } = useGLTF("/models/stone_RND_decoded.glb");
-
     return (
       <mesh
         ref={ref}

@@ -1,24 +1,69 @@
 // components/MetalSwitcher.js
-import { useLoader } from "@react-three/fiber";
-import { TextureLoader } from "three";
+import React, { useState } from "react";
+import * as THREE from "three";
+
+const themes = [
+  {
+    label: "White",
+    color: "#e5e4e2",
+    metalness: 1,
+    roughness: 0.2,
+    envMapIntensity: 1.5,
+    texture: "/textures/metal/white.png",
+  },
+  {
+    label: "Rose Gold",
+    color: "#b76e79",
+    metalness: 1,
+    roughness: 0.25,
+    envMapIntensity: 1.3,
+    texture: "/textures/metal/rose.png",
+  },
+  {
+    label: "Yellow",
+    color: "#b8860b",
+    metalness: 0.9,
+    roughness: 0.3,
+    envMapIntensity: 1.2,
+    texture: "/textures/metal/yellow.png",
+  },
+  {
+    label: "Black",
+    color: "#000",
+    metalness: 0.8,
+    roughness: 0.35,
+    envMapIntensity: 1.1,
+    texture: "/textures/metal/black.png",
+  },
+];
 
 export default function MetalSwitcher({ setMetalTexture }) {
-  const textures = {
-    white: useLoader(TextureLoader, "/textures/metal/white.png"),
-    yellow: useLoader(TextureLoader, "/textures/metal/yellow.png"),
-    rose: useLoader(TextureLoader, "/textures/metal/rose.png"),
+  const [selectedColor, setSelectedColor] = useState("White");
+  const handleChange = (data) => {
+    // const texture = new THREE.TextureLoader().load(data.texture);
+    // texture.encoding = THREE.sRGBEncoding;
+    // setMetalTexture(texture);
+    setMetalTexture(new THREE.Color(data.color));
+    setSelectedColor(data.label);
   };
 
   return (
-    <div style={{ position: "absolute", top: 20, left: 20 }}>
-      {Object.keys(textures).map((metal) => (
+    <div style={{ display: "flex", gap: "10px", margin: "10px 0" }}>
+      {themes.map((theme) => (
         <button
-          key={metal}
-          onClick={() => setMetalTexture(textures[metal])}
-          style={{ marginRight: 10 }}
-        >
-          {metal}
-        </button>
+          key={theme.label}
+          onClick={() => handleChange(theme)}
+          style={{
+            backgroundColor: theme.color,
+            border: "1px solid #ccc",
+            width: "40px",
+            height: "40px",
+            borderRadius: "50%",
+            cursor: "pointer",
+            outline: selectedColor === theme.label ? "3px solid black" : "none",
+          }}
+          title={theme.label}
+        />
       ))}
     </div>
   );

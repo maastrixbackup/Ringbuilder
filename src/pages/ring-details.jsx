@@ -45,7 +45,6 @@ const RingDetailsPage = () => {
       });
   }, [id, navigate]);
 
-  if (!product) return loading ? <Loader isLoading /> : null;
 
   const goMode = (mode) => {
     dispatch(setMode(mode));
@@ -64,16 +63,16 @@ const RingDetailsPage = () => {
             {/* Images */}
             <div>
               <motion.img
-                key={product.ring_image}
-                src={product.ring_image}
-                alt={product.title}
+                key={product?.ring_image}
+                src={product?.ring_image}
+                alt={product?.title}
                 className="w-full rounded-xl shadow-lg cursor-zoom-in"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
               />
               <div className="flex gap-4 mt-4">
-                {product.images?.map((thumb, i) => (
+                {product?.images?.map((thumb, i) => (
                   <motion.img
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.2 }}
@@ -93,23 +92,23 @@ const RingDetailsPage = () => {
               transition={{ duration: 0.5 }}
             >
               <h3 className="text-xl font-serif font-semibold mb-2 text-gray-800">
-                {product.title}
+                {product?.title}
               </h3>
               <p className="text-base text-gray-600 mb-6">
                 Price:{" "}
                 <span className="text-yellow-700 font-medium">
-                  ${product.ring_price}
+                  ${product?.ring_price}
                 </span>
               </p>
 
               {/* Example: Metal options if available */}
-              {product.metals && (
+              {product?.metals && (
                 <div className="mb-6">
                   <h3 className="text-xs font-medium text-gray-700 mb-2 tracking-wide uppercase">
                     Metal Type
                   </h3>
                   <div className="flex gap-2">
-                    {product.metals.map((metal) => (
+                    {product?.metals.map((metal) => (
                       <button
                         key={metal}
                         className="px-3 py-1.5 text-xs border border-gray-300 rounded-full hover:border-yellow-500 hover:bg-yellow-50 transition-all duration-200 shadow-sm font-light text-gray-700"
@@ -153,14 +152,14 @@ const RingDetailsPage = () => {
             <div className="mt-6 text-sm text-gray-600 leading-relaxed mb-50">
               {activeTab === "description" && (
                 <div
-                  dangerouslySetInnerHTML={{ __html: product.description }}
+                  dangerouslySetInnerHTML={{ __html: product?.description }}
                 />
               )}
               {activeTab === "specs" && (
-                <pre>{JSON.stringify(product.specifications, null, 2)}</pre>
+                <pre>{JSON.stringify(product?.specifications, null, 2)}</pre>
               )}
               {activeTab === "care" && (
-                <p>{product.care_instructions || "Handle with care."}</p>
+                <p>{product?.care_instructions || "Handle with care."}</p>
               )}
             </div>
           </div>
