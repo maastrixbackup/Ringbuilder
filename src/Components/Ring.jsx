@@ -20,7 +20,7 @@ export default function Ring({ metalTexture, scale = 1 }) {
             roughness: 0.35, // little more roughness = richer reflection
             clearcoat: 0.8,
             clearcoatRoughness: 0.15,
-            envMapIntensity: 1.5, // lower if too bright
+            envMapIntensity: 1, // lower if too bright
           });
 
           if (metalTexture?.isTexture) {

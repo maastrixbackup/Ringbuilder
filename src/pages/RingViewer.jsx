@@ -9,16 +9,14 @@ import * as THREE from "three";
 export default function RingViewer({ metalTexture }) {
   const diamondRef = useRef();
 
-  const cubeMap = new THREE.CubeTextureLoader()
-    .setPath("/textures/stone_env/")
-    .load([
-      "pano_px.webp",
-      "pano_nx.webp",
-      "pano_py.webp",
-      "pano_ny.webp",
-      "pano_pz.webp",
-      "pano_nz.webp",
-    ]);
+  const cubeMap = new THREE.CubeTextureLoader().load([
+    "/textures/diamond_env/pano_px.png",
+    "/textures/diamond_env/pano_nx.png",
+    "/textures/diamond_env/pano_py.png",
+    "/textures/diamond_env/pano_ny.png",
+    "/textures/diamond_env/pano_pz.png",
+    "/textures/diamond_env/pano_nz.png",
+  ]);
 
   return (
     <div
