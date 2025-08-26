@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setSelectedStone, setCurrentStep } from "../store/ringBuilderSlice";
@@ -18,23 +18,17 @@ const DiamondsPage = () => {
 
   useEffect(() => {
     dispatch(setCurrentStep(2));
+    const getDiamondFilterData = async () => {
+      try {
+        const res = await fetch(baseUrl() + "getDiamondFilterData");
+        const result = await res.json();
+        setFilterOptions(result.data || {});
+      } catch (error) {
+        console.error("Error fetching diamond filters", error);
+      }
+    };
     getDiamondFilterData();
   }, [dispatch]);
-
-  const getDiamondFilterData = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(baseUrl() + "getDiamondFilterData", {
-        method: "GET",
-      });
-      const result = await res.json();
-      setFilterOptions(result.data || {});
-    } catch (error) {
-      console.error("Error fetching diamond filters", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     const paramsObj = {};
@@ -42,35 +36,71 @@ const DiamondsPage = () => {
       paramsObj[key] = value;
     }
     setFilters(paramsObj);
-  }, []);
+  }, [searchParams]);
 
- 
   useEffect(() => {
-    const cleanFilters = Object.fromEntries(
-      Object.entries(filters).filter(([_, v]) => v && v.trim() !== "")
-    );
-    const queryString = new URLSearchParams(cleanFilters).toString();
+    if (!filters) return;
 
-    navigate(`/diamonds/${queryString ? `?${queryString}` : ""}`, {
-      replace: true,
-    });
+    const controller = new AbortController();
 
-    setLoading(true);
-    fetch(`${baseUrl()}diamond-products?${queryString}`, { method: "GET" })
-      .then((res) => res.json())
-      .then((result) => {
+    const fetchDiamonds = async () => {
+      setLoading(true);
+
+      const cleanFilters = {};
+      if (filters.shape) cleanFilters.shape = filters.shape;
+      if (filters.cut) cleanFilters.cut = filters.cut;
+      if (filters.color) cleanFilters.color = filters.color;
+      if (filters.clarity) cleanFilters.clarity = filters.clarity;
+      if (filters.grown_type) cleanFilters.grown_type = filters.grown_type;
+
+      if (filters.carat) {
+        const [from, to] = filters.carat.split("-");
+        cleanFilters.carat_from = from;
+        cleanFilters.carat_to = to;
+      }
+
+      if (filters.price) {
+        const [from, to] = filters.price.split("-");
+        cleanFilters.price_from = from;
+        cleanFilters.price_to = to;
+      }
+
+      cleanFilters.sort = filters.sort;
+
+      const queryString = new URLSearchParams(cleanFilters).toString();
+
+      navigate(`/diamonds${queryString ? `?${queryString}` : ""}`, {
+        replace: true,
+      });
+
+      try {
+        const res = await fetch(`${baseUrl()}diamond-products?${queryString}`, {
+          signal: controller.signal,
+        });
+        const result = await res.json();
         if (result?.status) {
           setAllDiamonds(result.data.products || []);
+        } else {
+          setAllDiamonds([]);
         }
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.error("Error fetching diamonds:", err);
+        }
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
+      }
+    };
+
+    const debounceTimer = setTimeout(fetchDiamonds, 300);
+
+    return () => {
+      clearTimeout(debounceTimer);
+      controller.abort();
+    };
   }, [filters, navigate]);
 
-  const updateFilter = (key, value) => {
+  const updateFilter = useCallback((key, value) => {
     setFilters((prev) => {
       if (prev[key] === value) {
         const { [key]: _, ...rest } = prev;
@@ -78,7 +108,7 @@ const DiamondsPage = () => {
       }
       return { ...prev, [key]: value };
     });
-  };
+  }, []);
 
   return (
     <>
@@ -86,69 +116,36 @@ const DiamondsPage = () => {
       <section className="mt-24">
         <div className={`container ${loading ? "blurred" : ""}`}>
           <Tab />
-          <div className="row mt-4">
-            <div className="page-header elegant-header">
+          <div className="row mt-2">
+            <div className="page-header">
               <h1>Discover Your Perfect Diamond</h1>
               <p>
-                Browse our curated collection of ethically sourced, GIA-certified
-                diamonds designed to complement your chosen setting.
+                Browse our curated collection of ethically sourced,
+                GIA-certified diamonds designed to complement your chosen
+                setting.
               </p>
             </div>
 
             {/* Filters */}
-            <div className="col-md-12 mt-3">
-              <div className="filter-row d-flex flex-wrap align-items-center">
-                <select
-                  className="filter-dropdown"
-                  value={filters.shape || ""}
-                  onChange={(e) => updateFilter("shape", e.target.value)}
-                >
-                  <option value="">Shape</option>
-                  {filterOptions.shapes?.map((s) => (
-                    <option key={s.id} value={s.title}>
-                      {s.title}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  className="filter-dropdown"
-                  value={filters.carat || ""}
-                  onChange={(e) => updateFilter("carat", e.target.value)}
-                >
-                  <option value="">Carat</option>
-                  {filterOptions.carat?.map((c) => (
-                    <option key={c.id} value={c.value}>
-                      {c.value}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  className="filter-dropdown"
-                  value={filters.color || ""}
-                  onChange={(e) => updateFilter("color", e.target.value)}
-                >
-                  <option value="">Color</option>
-                  {filterOptions.colors?.map((c) => (
-                    <option key={c.id} value={c.name}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  className="filter-dropdown"
-                  value={filters.clarity || ""}
-                  onChange={(e) => updateFilter("clarity", e.target.value)}
-                >
-                  <option value="">Clarity</option>
-                  {filterOptions.clarity?.map((cl) => (
-                    <option key={cl.id} value={cl.name}>
-                      {cl.name}
-                    </option>
-                  ))}
-                </select>
+            <div className="col-md-12 mt-1">
+              <div className="shape-filters flex flex-wrap gap-4">
+                {filterOptions.shapes?.map((s) => (
+                  <div
+                    key={s.id}
+                    onClick={() => updateFilter("shape", s.title)}
+                    className={`shape-option cursor-pointer border rounded-lg p-2 ${
+                      filters.shape === s.title
+                        ? "border-yellow-600 bg-yellow-50"
+                        : "border-gray-200"
+                    }`}
+                  >
+                    <img
+                      src={s.image}
+                      className="w-12 h-12 object-contain mx-auto"
+                    />
+                    <p className="text-sm text-center mt-1">{s.title}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -169,25 +166,25 @@ const DiamondsPage = () => {
                           id: diamond.id,
                           label: diamond.title,
                           price: diamond.price,
-                          image: diamond.main_image,
+                          image: diamond.img_one,
                         })
                       );
-                      navigate("/diamond-details");
+                      navigate(`/diamond-details?id=${diamond.id}`);
                     }}
                   >
                     <div className="ring-image-box">
-                       <div className="product-container">
-                      <img
-                        src={diamond.main_image || "/diamonds/default.jpg"}
-                        alt={diamond.title}
-                        className="default-image w-100"
-                      />
+                      <div className="product-container">
                         <img
-                          src={diamond.main_image}
+                          src={diamond.img_one || "/diamonds/default.jpg"}
+                          alt={diamond.title}
+                          className="default-image w-100"
+                        />
+                        <img
+                          src={diamond.img_one}
                           alt="On model"
                           className="hover-image w-100"
                         />
-                    </div>
+                      </div>
                     </div>
                     <div className="content-ring-box">
                       <p className="ring-title">{diamond.title}</p>
@@ -206,4 +203,3 @@ const DiamondsPage = () => {
 };
 
 export default DiamondsPage;
-
