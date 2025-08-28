@@ -50,8 +50,12 @@ export default function RingBuilderArrowStepperImages() {
           navigate("/rings");
         }
         break;
-      case 1: // Diamond -> Diamond Details
-        navigate("/diamond-details");
+      case 1:
+        if (selectedStone?.id) {
+          navigate(`/diamond-details?id=${selectedStone.id}`);
+        } else {
+          navigate("/diamonds");
+        }
         break;
       default:
         break;
@@ -139,7 +143,6 @@ export default function RingBuilderArrowStepperImages() {
               </div>
             )}
 
-            {/* Step label click (tab itself) */}
             <div
               className="cursor-pointer ml-1 md:ml-2 flex-1"
               onClick={() => {
@@ -147,6 +150,9 @@ export default function RingBuilderArrowStepperImages() {
                   if (index === 0) {
                     const query = new URLSearchParams(filters || {}).toString();
                     navigate(`/rings${query ? `?${query}` : ""}`);
+                  } else if (index === 1) {
+                  
+                    navigate(mode === "gemstone" ? "/gemstones" : "/diamonds");
                   } else if (isCompleted || isActive) {
                     goView(index);
                   }
@@ -178,10 +184,10 @@ export default function RingBuilderArrowStepperImages() {
             </div>
 
             {/* Image + Actions */}
-            {step.img && index !== 2 && (isCompleted || isActive) && (
+            {step.img && index !== 2 && (
               <div className="flex items-center gap-2 ml-2">
                 <div className="flex flex-col items-start">
-                  {step.price && (
+                  {step.price != null && (
                     <div className="text-xs md:text-sm font-medium text-gray-800">
                       {step.price.toLocaleString()}
                     </div>
