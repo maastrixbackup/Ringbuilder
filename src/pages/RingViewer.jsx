@@ -5,18 +5,12 @@ import { OrbitControls, Environment } from "@react-three/drei";
 import Ring from "../Components/Ring";
 import Diamond from "../Components/Diamond";
 import * as THREE from "three";
+import { HDRSetup } from "../Components/HDRSetup";
 
-export default function RingViewer({ metalTexture }) {
+
+export default function RingViewer({ metalKey, setRenderer, setScene }) {
   const diamondRef = useRef();
-
-  const cubeMap = new THREE.CubeTextureLoader().load([
-    "/textures/diamond_env/pano_px.png",
-    "/textures/diamond_env/pano_nx.png",
-    "/textures/diamond_env/pano_py.png",
-    "/textures/diamond_env/pano_ny.png",
-    "/textures/diamond_env/pano_pz.png",
-    "/textures/diamond_env/pano_nz.png",
-  ]);
+  const DPR = Math.min(window.devicePixelRatio, 2);
 
   return (
     <div
@@ -29,15 +23,20 @@ export default function RingViewer({ metalTexture }) {
       }}
     >
       <Canvas
+        dpr={DPR}
         camera={{ position: [0, 2, 5], fov: 50 }}
-        shadows
         gl={{
           antialias: true,
+          alpha: false,
           toneMapping: THREE.ACESFilmicToneMapping,
-          outputEncoding: THREE.sRGBEncoding,
+          outputColorSpace: THREE.SRGBColorSpace,
+          physicallyCorrectLights: true,
         }}
-        onCreated={({ gl }) => {
-          gl.toneMappingExposure = 0.5; // darker overall
+        onCreated={async ({ gl, scene }) => {
+          gl.setClearColor(0xffffff, 1);
+          gl.toneMappingExposure = 1.0;
+          setRenderer(gl);
+          setScene(scene);
         }}
       >
         <ambientLight intensity={0.15} />
@@ -49,21 +48,21 @@ export default function RingViewer({ metalTexture }) {
           castShadow
         />
         <pointLight position={[0, 5, 0]} intensity={1.5} />
+
         <Suspense fallback={null}>
           <group scale={1.5}>
-            <Ring metalTexture={metalTexture} scale={100} />
-            <Diamond
-              cubeMap={cubeMap}
-              ref={diamondRef}
-              scale={1}
-              position={[0, 0.75, 0]}
-            />
+            <Ring scale={100} />
+            <Diamond ref={diamondRef} scale={1} position={[0, 0.8, 0]} />
           </group>
+
+          <HDRSetup metalKey={metalKey} diamondRef={diamondRef} />
+
           <Environment
             intensity={1.25}
             background={false}
             files="/hdr/studio_small_03_1k.hdr"
           />
+
           <OrbitControls
             enablePan={false}
             enableZoom={true}

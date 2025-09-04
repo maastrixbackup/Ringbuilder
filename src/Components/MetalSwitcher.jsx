@@ -1,49 +1,40 @@
 // components/MetalSwitcher.js
-import React, { useState } from "react";
-import * as THREE from "three";
+import { setMetalHDR } from "../utils/lightingHelpers";
 
 const themes = [
   {
-    label: "White",
+    label: "white",
     color: "#e5e4e2",
     metalness: 1,
     roughness: 0.2,
     envMapIntensity: 1.5,
-    texture: "/textures/metal/white.png",
   },
   {
-    label: "Rose Gold",
+    label: "rose",
     color: "#b76e79",
     metalness: 1,
     roughness: 0.25,
     envMapIntensity: 1.3,
-    texture: "/textures/metal/rose.png",
   },
   {
-    label: "Yellow",
+    label: "yellow",
     color: "#b8860b",
     metalness: 0.9,
     roughness: 0.3,
     envMapIntensity: 1.2,
-    texture: "/textures/metal/yellow.png",
-  },
-  {
-    label: "Black",
-    color: "#000",
-    metalness: 0.8,
-    roughness: 0.35,
-    envMapIntensity: 1.1,
-    texture: "/textures/metal/black.png",
   },
 ];
 
-export default function MetalSwitcher({ setMetalTexture }) {
-  const [selectedColor, setSelectedColor] = useState("White");
+export default function MetalSwitcher({
+  setMetalTheme,
+  setSelectedColor,
+  selectedColor,
+  renderer,
+  scene,
+}) {
   const handleChange = (data) => {
-    // const texture = new THREE.TextureLoader().load(data.texture);
-    // texture.encoding = THREE.sRGBEncoding;
-    // setMetalTexture(texture);
-    setMetalTexture(new THREE.Color(data.color));
+    setMetalHDR(data.label, renderer, scene);
+    setMetalTheme(data.label);
     setSelectedColor(data.label);
   };
 
