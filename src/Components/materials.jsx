@@ -1,18 +1,26 @@
 import * as THREE from "three";
 
-// Metal material
+// Keep your original metal material approach - it was working well
 export const metalMaterial = new THREE.MeshPhysicalMaterial({
-  metalness: 1.0,
-  roughness: 0.20,
+  transmission: 1.0,
+  transparent: true,
+  opacity: 1.0,
+  ior: 1.52,
+  color: 0xf2f2f2,
+  metalness: 1.2,
+  roughness: 0.12,
   envMapIntensity: 1.0,
-  clearcoat: 0.8,
-  clearcoatRoughness: 0.15,
+  clearcoat: 0.2,
+  clearcoatRoughness: 0.05,
+  attenuationColor: new THREE.Color("#ffffff"),
+  attenuationDistance: 2.5,
 });
 
+// Your original metal themes were good
 export const METAL_THEMES = {
-  white: { color: 0xdddddd, rough: 0.18, env: 1.0 },
-  yellow: { color: 0xd4af37, rough: 0.22, env: 1.1 },
-  rose: { color: 0xb76e79, rough: 0.20, env: 1.05 },
+  white: { color: 0xd9d7d6, rough: 0.12, env: 1.0 },
+  yellow: { color: 0xd4af37, rough: 0.14, env: 1.05 },
+  rose: { color: 0xb76e79, rough: 0.14, env: 1.05 },
 };
 
 export function setMetalTheme(key) {
@@ -24,13 +32,17 @@ export function setMetalTheme(key) {
   metalMaterial.needsUpdate = true;
 }
 
-// Diamond material
+// Your original diamond material was better
 export const diamondMaterial = new THREE.MeshPhysicalMaterial({
   transmission: 1.0,
+  transparent: true,
   ior: 2.417,
-  thickness: 1.5,
-  roughness: 0.02,
+  thickness: 2.5,
+  roughness: 0.015,
   metalness: 0.0,
-  clearcoat: 1.0,
-  clearcoatRoughness: 0.02,
+  clearcoat: 0.2,
+  clearcoatRoughness: 0.05,
+  attenuationColor: new THREE.Color("#ffffff"),
+  specularColor: new THREE.Color("#ffffff"),
+  envMapIntensity: 1.3,
 });

@@ -1,27 +1,23 @@
 // components/MetalSwitcher.js
-import { setMetalHDR } from "../utils/lightingHelpers";
 
 const themes = [
   {
     label: "white",
     color: "#e5e4e2",
-    metalness: 1,
-    roughness: 0.2,
-    envMapIntensity: 1.5,
+    roughness: 0.12, // polished white gold
+    envMapIntensity: 1.0,
   },
   {
     label: "rose",
     color: "#b76e79",
-    metalness: 1,
-    roughness: 0.25,
-    envMapIntensity: 1.3,
+    roughness: 0.14, // slightly softer gradient
+    envMapIntensity: 1.05,
   },
   {
     label: "yellow",
     color: "#b8860b",
-    metalness: 0.9,
-    roughness: 0.3,
-    envMapIntensity: 1.2,
+    roughness: 0.14,
+    envMapIntensity: 1.05,
   },
 ];
 
@@ -29,13 +25,10 @@ export default function MetalSwitcher({
   setMetalTheme,
   setSelectedColor,
   selectedColor,
-  renderer,
-  scene,
 }) {
   const handleChange = (data) => {
-    setMetalHDR(data.label, renderer, scene);
-    setMetalTheme(data.label);
-    setSelectedColor(data.label);
+    setMetalTheme(data.label); // only updates material props
+    setSelectedColor(data.label); // drives HDRSetup through metalKey
   };
 
   return (
