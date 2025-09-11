@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setSelectedSetting } from "../store/ringBuilderSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setSelectedSetting,
+  setCurrentStep,
+  setFilters, 
+} from "../store/ringBuilderSlice";
 import { baseUrl } from "../utils/utils";
 import Loader from "../utils/loader";
 import Tab from "../Components/Tab";
@@ -13,9 +17,18 @@ const Setting = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
-  const [filters, setFilters] = useState({});
+  const { filters } = useSelector((s) => s.ringBuilder);
   const [filterOptions, setFilterOptions] = useState({});
 
+  useEffect(() => {
+    const paramsObj = {};
+    for (const [key, value] of searchParams.entries()) {
+      paramsObj[key] = value;
+    }
+    if (Object.keys(paramsObj).length > 0) {
+      dispatch(setFilters(paramsObj));
+    }
+  }, []);
   useEffect(() => {
     getRingFilterData();
   }, []);
@@ -34,23 +47,15 @@ const Setting = () => {
       setLoading(false);
     }
   };
-  
-  useEffect(() => {
-    const paramsObj = {};
-    for (const [key, value] of searchParams.entries()) {
-      paramsObj[key] = value;
-    }
-    setFilters(paramsObj);
-  }, []);
 
   useEffect(() => {
+    if (!filters) return;
     const cleanFilters = Object.fromEntries(
       Object.entries(filters).filter(([_, v]) => v && v.trim() !== "")
     );
-
     const queryString = new URLSearchParams(cleanFilters).toString();
 
-    navigate(`/rings/${queryString ? `?${queryString}` : ""}`, {
+    navigate(`/rings${queryString ? `?${queryString}` : ""}`, {
       replace: true,
     });
     setLoading(true);
@@ -70,17 +75,13 @@ const Setting = () => {
   }, [filters, navigate]);
 
   const updateFilter = (key, value) => {
-    setFilters((prev) => {
-      // if (key === "ring-type") {
-      if (prev[key] === value) {
-        const { [key]: _, ...rest } = prev;
-        return rest;
-      }
-      return { ...prev, [key]: value };
-      // }
-
-      // return { ...prev, [key]: value };
-    });
+    let newFilters = { ...filters };
+    if (newFilters[key] === value) {
+      delete newFilters[key];
+    } else {
+      newFilters[key] = value;
+    }
+    dispatch(setFilters(newFilters));
   };
 
   return (
@@ -104,7 +105,7 @@ const Setting = () => {
                   <div
                     key={style.id}
                     className={`ring-style-item ${
-                      filters["ring_style"] === style.title
+                      filters?.ring_style === style.title
                         ? "!border !border-gray-500 !bg-green-200"
                         : ""
                     }`}
@@ -126,7 +127,7 @@ const Setting = () => {
             <div className="filter-row d-flex flex-wrap align-items-center ">
               <select
                 className="filter-dropdown"
-                value={filters.ring_size || ""}
+                value={filters?.ring_size || ""}
                 onChange={(e) => updateFilter("ring_size", e.target.value)}
               >
                 <option value="">Ring Size</option>
@@ -137,10 +138,9 @@ const Setting = () => {
                 ))}
               </select>
 
-              {/* Metal Colors */}
               <select
                 className="filter-dropdown"
-                value={filters.ring_color || ""}
+                value={filters?.ring_color || ""}
                 onChange={(e) => updateFilter("ring_color", e.target.value)}
               >
                 <option value="">Metal</option>
@@ -151,10 +151,9 @@ const Setting = () => {
                 ))}
               </select>
 
-              {/* Width */}
               <select
                 className="filter-dropdown"
-                value={filters.ring_width || ""}
+                value={filters?.ring_width || ""}
                 onChange={(e) => updateFilter("ring_width", e.target.value)}
               >
                 <option value="">Width</option>
@@ -165,10 +164,9 @@ const Setting = () => {
                 ))}
               </select>
 
-              {/* Shapes */}
               <select
                 className="filter-dropdown"
-                value={filters.diamond_shape || ""}
+                value={filters?.diamond_shape || ""}
                 onChange={(e) => updateFilter("diamond_shape", e.target.value)}
               >
                 <option value="">Can Be Set With</option>
@@ -179,10 +177,9 @@ const Setting = () => {
                 ))}
               </select>
 
-              {/* Karat */}
               <select
                 className="filter-dropdown"
-                value={filters.ring_karat || ""}
+                value={filters?.ring_karat || ""}
                 onChange={(e) => updateFilter("ring_karat", e.target.value)}
               >
                 <option value="">Karat</option>
@@ -207,13 +204,14 @@ const Setting = () => {
                     className="ring-product-box premium-card"
                     onClick={() => {
                       const newSetting = {
+                        id: ring.id,
                         label: ring.title,
-                        price: `$${ring.ring_price}`,
+                        price: ring.ring_price,
                         image: ring.normal_image,
                       };
                       dispatch(setSelectedSetting(newSetting));
-                      // localStorage.removeItem("selectedDiamond");
-                      navigate("/ring-details");
+                      dispatch(setCurrentStep(1));
+                      navigate(`/ring-details?id=${ring.id}`);
                     }}
                   >
                     <div className="ring-image-box">

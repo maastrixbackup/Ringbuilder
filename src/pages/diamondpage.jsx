@@ -1,157 +1,204 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useRingBuilder } from "../../context/RingBuilderContext";
-import { baseUrl } from "../../utils/utils";
-import Loader from "../../utils/loader";
-import Tab2 from "../Tab2";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setSelectedStone, setCurrentStep } from "../store/ringBuilderSlice";
+import { baseUrl } from "../utils/utils";
+import Loader from "../utils/loader";
+import Tab from "../Components/Tab";
+import Header from "../Components/Header";
 
 const DiamondsPage = () => {
-  const navigate = useNavigate();
-  const { setSelectedDiamond } = useRingBuilder();
   const [loading, setLoading] = useState(true);
-  const [diamondShapes, setDiamondShapes] = useState([]);
   const [allDiamonds, setAllDiamonds] = useState([]);
-  const [selectedShape, setSelectedShape] = useState(null);
-
-  const getDiamonds = async (shape = null) => {
-    try {
-      setLoading(true);
-
-      const payload = {};
-      if (shape) {
-        payload.shape = shape;
-      }
-
-      const res = await fetch(baseUrl() + "diamond-products", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const result = await res.json();
-      if (result.status && result.data) {
-        setDiamondShapes(result.data.shapes || []);
-        setAllDiamonds(result.data.products || []);
-      }
-    } catch (error) {
-      console.error("Error loading diamonds:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [filters, setFilters] = useState({});
+  const [filterOptions, setFilterOptions] = useState({});
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getDiamonds();
+    dispatch(setCurrentStep(2));
+    const getDiamondFilterData = async () => {
+      try {
+        const res = await fetch(baseUrl() + "getDiamondFilterData");
+        const result = await res.json();
+        setFilterOptions(result.data || {});
+      } catch (error) {
+        console.error("Error fetching diamond filters", error);
+      }
+    };
+    getDiamondFilterData();
+  }, [dispatch]);
+
+  useEffect(() => {
+    const paramsObj = {};
+    for (const [key, value] of searchParams.entries()) {
+      paramsObj[key] = value;
+    }
+    setFilters(paramsObj);
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!filters) return;
+
+    const controller = new AbortController();
+
+    const fetchDiamonds = async () => {
+      setLoading(true);
+
+      const cleanFilters = {};
+      if (filters.shape) cleanFilters.shape = filters.shape;
+      if (filters.cut) cleanFilters.cut = filters.cut;
+      if (filters.color) cleanFilters.color = filters.color;
+      if (filters.clarity) cleanFilters.clarity = filters.clarity;
+      if (filters.grown_type) cleanFilters.grown_type = filters.grown_type;
+
+      if (filters.carat) {
+        const [from, to] = filters.carat.split("-");
+        cleanFilters.carat_from = from;
+        cleanFilters.carat_to = to;
+      }
+
+      if (filters.price) {
+        const [from, to] = filters.price.split("-");
+        cleanFilters.price_from = from;
+        cleanFilters.price_to = to;
+      }
+
+      cleanFilters.sort = filters.sort;
+
+      const queryString = new URLSearchParams(cleanFilters).toString();
+
+      navigate(`/diamonds${queryString ? `?${queryString}` : ""}`, {
+        replace: true,
+      });
+
+      try {
+        const res = await fetch(`${baseUrl()}diamond-products?${queryString}`, {
+          signal: controller.signal,
+        });
+        const result = await res.json();
+        if (result?.status) {
+          setAllDiamonds(result.data.products || []);
+        } else {
+          setAllDiamonds([]);
+        }
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.error("Error fetching diamonds:", err);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const debounceTimer = setTimeout(fetchDiamonds, 300);
+
+    return () => {
+      clearTimeout(debounceTimer);
+      controller.abort();
+    };
+  }, [filters, navigate]);
+
+  const updateFilter = useCallback((key, value) => {
+    setFilters((prev) => {
+      if (prev[key] === value) {
+        const { [key]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [key]: value };
+    });
   }, []);
 
   return (
-    <section className="mt-2">
-      <div className={`container ${loading ? "blurred" : ""}`}>
-        <>
-          <Tab2 />
-          <div className="back-to-gallery mt-3 mb-2">
-            <span
-              onClick={() => navigate("/")}
-              style={{
-                fontSize: "12px",
-                fontWeight: "600",
-                textDecoration: "underline",
-                cursor: "pointer",
-                color: "#000",
-                textTransform: "uppercase",
-              }}
-            >
-              &lt; BACK TO RING SECTION
-            </span>
-          </div>
+    <>
+      <Header />
+      <section className="mt-24">
+        <div className={`container ${loading ? "blurred" : ""}`}>
+          <Tab />
+          <div className="row mt-2">
+            <div className="page-header">
+              <h1>Discover Your Perfect Diamond</h1>
+              <p>
+                Browse our curated collection of ethically sourced,
+                GIA-certified diamonds designed to complement your chosen
+                setting.
+              </p>
+            </div>
 
-          {/* Diamond Shape Filters */}
-          <div className="row mt-4">
-            <div className="col-md-12">
-              <div className="ring-style-list d-flex flex-wrap gap-2">
-                {diamondShapes.map((shape, i) => (
+            {/* Filters */}
+            <div className="col-md-12 mt-1">
+              <div className="shape-filters flex flex-wrap gap-4">
+                {filterOptions.shapes?.map((s) => (
                   <div
-                    // key={shape.name}
-                    key={shape.id || i}
-                    className={`ring-style-item ${
-                      selectedShape === shape.title ? "border border-dark" : ""
+                    key={s.id}
+                    onClick={() => updateFilter("shape", s.title)}
+                    className={`shape-option cursor-pointer border rounded-lg p-2 ${
+                      filters.shape === s.title
+                        ? "border-yellow-600 bg-yellow-50"
+                        : "border-gray-200"
                     }`}
-                    style={{ width: "70px", cursor: "pointer" }}
-                    onClick={() => {
-                      setSelectedShape(shape.title);
-                      getDiamonds(shape.title);
-                    }}
                   >
-                    <div className="shape-box text-center">
-                      <img
-                        src={shape.image || "/diamonds/default-shape.png"}
-                        alt={shape.name}
-                        height={i === 9 ? "20px" : "30px"}
-                      />
-                      <br />
-                      {shape.title}
-                    </div>
+                    <img
+                      src={s.image}
+                      className="w-12 h-12 object-contain mx-auto"
+                    />
+                    <p className="text-sm text-center mt-1">{s.title}</p>
                   </div>
                 ))}
               </div>
             </div>
-
-            <div className="col-md-7 mt-4">
-              <h1 className="engaging-ring">
-                View All Diamonds{" "}
-                <span className="disable">[{allDiamonds.length}]</span>
-              </h1>
-              <p className="paragragh-engaging-ring pt-3">
-                Pick your perfect diamond with James Allen. Start by choosing a
-                high-quality, GIA-certified diamond from our selection of
-                conflict-free diamonds. Then select your preferred ring setting!
-              </p>
-            </div>
           </div>
 
-          {/* Diamond List */}
           <div className="row mt-4">
             {allDiamonds.length === 0 ? (
               <div className="col-12">
-                <p>No diamonds found for selected shape.</p>
+                <p>No diamonds found for selected filters.</p>
               </div>
             ) : (
               allDiamonds.map((diamond) => (
                 <div className="col-md-3 mb-4" key={diamond.id}>
                   <div
-                    className="ring-product-box"
+                    className="ring-product-box premium-card"
                     onClick={() => {
-                      setSelectedDiamond({
-                        label: diamond.title,
-                        price: `$${diamond.price}`,
-                        model: diamond.model || "/models/default.glb",
-                      });
-                      navigate("/complete-ring");
+                      dispatch(
+                        setSelectedStone({
+                          id: diamond.id,
+                          label: diamond.title,
+                          price: diamond.price,
+                          image: diamond.img_one,
+                        })
+                      );
+                      navigate(`/diamond-details?id=${diamond.id}`);
                     }}
-                    style={{ cursor: "pointer" }}
                   >
                     <div className="ring-image-box">
-                      <img
-                        src={diamond.main_image || "/diamonds/default.jpg"}
-                        className="w-100"
-                        alt={diamond.title}
-                      />
+                      <div className="product-container">
+                        <img
+                          src={diamond.img_one || "/diamonds/default.jpg"}
+                          alt={diamond.title}
+                          className="default-image w-100"
+                        />
+                        <img
+                          src={diamond.img_one}
+                          alt="On model"
+                          className="hover-image w-100"
+                        />
+                      </div>
                     </div>
                     <div className="content-ring-box">
-                      <p>{diamond.title}</p>
-                      <p>${diamond.price}</p>
+                      <p className="ring-title">{diamond.title}</p>
+                      <p className="ring-price">${diamond.price}</p>
                     </div>
                   </div>
                 </div>
               ))
             )}
           </div>
-        </>
-      </div>
-      {loading && <Loader isLoading={loading} />}
-    </section>
+        </div>
+        {loading && <Loader isLoading={loading} />}
+      </section>
+    </>
   );
 };
 

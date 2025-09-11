@@ -11,6 +11,8 @@ const SettingsPage = lazy(() => import("./pages/settingspage"));
 const DiamondsPage = lazy(() => import("./pages/diamondpage"));
 const CompleteRingPage = lazy(() => import("./pages/completeringpage"));
 const RingDetails = lazy(() => import("./pages/ring-details"));
+const DiamondDetails = lazy(() => import("./pages/diamond-details"));
+const RingViewer = lazy(() => import("./pages/RingViewer"));
 import "../style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -27,6 +29,8 @@ export default function App() {
             <Route path="/diamonds" element={<DiamondsPage />} />
             <Route path="/complete-ring" element={<CompleteRingPage />} />
             <Route path="/ring-details" element={<RingDetails />} />
+            <Route path="/diamond-details" element={<DiamondDetails />} />
+            <Route path="/ring-view" element={<RingViewer />} />
             <Route path="/" element={<Home />} />
           </Routes>
         </Suspense>

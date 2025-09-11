@@ -1,0 +1,33 @@
+{
+  "models": {
+    "color_shank": "white",
+    "color_head": "white",
+    "head_style": "001",
+    "head_clue": "PR",
+    "shank_style": "001",
+
+    "stone_size": "100",
+    "stone_type": "RND",
+
+    "brand": "jamesallen",
+    "load_sku": false,
+    "sku_number": "17452",
+    "color_sku": "white",
+    "init_dissolve": true,
+    "enable_dissolve_after_delay": false
+  },
+  "viewer": {
+    "camera_min_distance": 7,
+    "camera_max_distance": 15,
+    "camera_position": {
+      "x": 0,
+      "y": 7.5,
+      "z": -5
+    },
+    "jvIsMobile": false
+  },
+  "arViewer": {
+    "start": false,
+    "load_assets": false
+  }
+}

@@ -21,6 +21,7 @@ const initialState = {
   selectedSetting: load("selectedSetting", null),
   selectedStone: load("selectedStone", null),
   mode: load("rb_mode", null),
+  filters: load("rb_filters", {}),
   ui: {
     choiceModalOpen: false,
   },
@@ -49,7 +50,6 @@ const slice = createSlice({
       persist("selectedStone", null);
       state.mode = null;
       persist("rb_mode", null);
-      state.currentStep = 2;
     },
     clearSelectedSetting(state) {
       state.selectedSetting = null;
@@ -71,6 +71,20 @@ const slice = createSlice({
       persist("selectedStone", null);
       state.currentStep = 3;
     },
+
+    setFilters(state, action) {
+      if (typeof action.payload === "function") {
+        state.filters = action.payload(state.filters || {});
+      } else {
+        state.filters = action.payload || {};
+      }
+      persist("rb_filters", state.filters);
+    },
+    clearFilters(state) {
+      state.filters = {};
+      persist("rb_filters", {});
+    },
+
     openChoiceModal(state) {
       state.ui.choiceModalOpen = true;
     },
@@ -82,6 +96,7 @@ const slice = createSlice({
       state.selectedSetting = load("selectedSetting", null);
       state.selectedStone = load("selectedStone", null);
       state.mode = load("rb_mode", null);
+      state.filters = load("rb_filters", {});
 
       if (!state.selectedSetting) state.currentStep = 1;
       else if (state.selectedSetting && !state.selectedStone)
@@ -100,6 +115,8 @@ export const {
   clearSelectedSetting,
   setSelectedStone,
   clearSelectedStone,
+  setFilters,
+  clearFilters,
   openChoiceModal,
   closeChoiceModal,
   hydrateFromStorage,
