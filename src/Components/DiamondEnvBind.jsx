@@ -5,7 +5,7 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 export function DiamondEnvBind({
   root,
   pmrem,
-  hdr = "/lighting/diamond/rb_diamond_1k.hdr",
+  hdr,
 }) {
   useEffect(() => {
     if (!root || !pmrem) return;
