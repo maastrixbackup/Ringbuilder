@@ -3,23 +3,24 @@
 const themes = [
   {
     label: "white",
-    color: "#e5e4e2",
-    roughness: 0.12, // polished white gold
-    envMapIntensity: 1.0,
+    color: "#f8f8f8", // use the SAME hex here
+    roughness: 0.08,
+    envMapIntensity: 1.8,
   },
   {
     label: "rose",
     color: "#b76e79",
-    roughness: 0.14, // slightly softer gradient
+    roughness: 0.14,
     envMapIntensity: 1.05,
   },
   {
     label: "yellow",
-    color: "#b8860b",
+    color: "#d4af37",
     roughness: 0.14,
     envMapIntensity: 1.05,
   },
 ];
+
 
 export default function MetalSwitcher({
   setMetalTheme,
@@ -30,7 +31,6 @@ export default function MetalSwitcher({
     setMetalTheme(data.label); // only updates material props
     setSelectedColor(data.label); // drives HDRSetup through metalKey
   };
-
   return (
     <div style={{ display: "flex", gap: "10px", margin: "10px 0" }}>
       {themes.map((theme) => (

@@ -1,21 +1,23 @@
 import * as THREE from "three";
 
-// Enhanced metal material for crisp finish
+// Use the same exact hex for white gold/platinum
+const WHITE_METAL_COLOR = 0xf8f8f8; // bright crisp white
+
 export const metalMaterial = new THREE.MeshPhysicalMaterial({
-  transmission: 0.0, // Remove transmission for solid metal look
+  transmission: 0.0,
   transparent: false,
   opacity: 1.0,
-  color: 0xf8f8f8, // Brighter white for crispness
-  metalness: 0.95, // Slightly reduced for better light interaction
-  roughness: 0.08, // Smoother for more reflections
-  envMapIntensity: 1.8, // Increased for better reflections
-  clearcoat: 0.8, // Higher clearcoat for glossy finish
-  clearcoatRoughness: 0.02, // Very smooth clearcoat
-  reflectivity: 1.0, // Maximum reflectivity
+  color: WHITE_METAL_COLOR,
+  metalness: 0.95,
+  roughness: 0.08,
+  envMapIntensity: 1.8,
+  clearcoat: 0.8,
+  clearcoatRoughness: 0.02,
+  reflectivity: 1.0,
 });
 
 export const METAL_THEMES = {
-  white: { color: 0xd9d7d6, rough: 0.12, env: 1.0 },
+  white: { color: WHITE_METAL_COLOR, rough: 0.08, env: 1.8 },
   yellow: { color: 0xd4af37, rough: 0.14, env: 1.05 },
   rose: { color: 0xb76e79, rough: 0.14, env: 1.05 },
 };
@@ -26,26 +28,26 @@ export function setMetalTheme(key) {
   metalMaterial.color.setHex(t.color);
   metalMaterial.roughness = t.rough;
   metalMaterial.envMapIntensity = t.env;
-  metalMaterial.clearcoat = t.clearcoat;
+  metalMaterial.clearcoat = t.clearcoat ?? 0.8;
   metalMaterial.needsUpdate = true;
 }
 
+
 // Enhanced diamond material for brilliant crystal effect
 export const diamondMaterial = new THREE.MeshPhysicalMaterial({
-  transmission: 0.98, // High transmission for glass-like effect
+  transmission: 1.3,
   transparent: true,
-  opacity: 1.0,
-  ior: 2.417, // Diamond's refractive index
-  thickness: 1.2, // Reduced thickness for better light penetration
-  roughness: 0.005, // Ultra-smooth for maximum brilliance
+  opacity: 1,
+  ior: 2.417,                 // Diamond refractive index
+  thickness: 1.5,             // more depth for light bouncing
+  roughness: 0.0,             // perfectly polished
   metalness: 0.0,
-  clearcoat: 1.0, // Maximum clearcoat for crystal effect
-  clearcoatRoughness: 0.0, // Perfect smoothness
+  clearcoat: 1.0,
+  clearcoatRoughness: 0.0,
   attenuationColor: new THREE.Color("#ffffff"),
-  attenuationDistance: 0.5, // Shorter distance for clearer appearance
+  attenuationDistance: 10,    // much higher so diamond stays bright
+  envMapIntensity: 5.0,       // strong reflections
+  reflectivity: 1.0,
+  specularIntensity: 1.0,
   specularColor: new THREE.Color("#ffffff"),
-  envMapIntensity: 2.5, // Higher for more reflections
-  reflectivity: 1.0, // Maximum reflectivity
-  // Add dispersion effect if supported
-  dispersion: 0.025, // Creates rainbow effect in refractions
 });
